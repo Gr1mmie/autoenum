@@ -22,6 +22,8 @@ cat autoenum/aggr_scan/raw/first_pass | grep "script results" > autoenum/aggr_sc
 $nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml
 searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/aggr_scan/exploits/searchsploit_nmap
 
+# if website, run nikto and bruteforce dirs using dirsearch to look for specific dirs or jsut dirbuster and output everything returned
+# cat autorecon/aggr_scan/ports_and_services/services_running | grep "http" | tee -a http_found;if [ -s 'http_found' ];then run nikto/dirb etc. fi; rm http_found
 
 #############################################################################################################################
 #for service in $(cat services); do searchsploit $service | tee -a searchsploit_$service # create method to remove files if no exploits are found
