@@ -24,8 +24,6 @@ searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/
 
 
 # if reg
-#$nmap_reg $IP | tee -a reg_scan
-#cat reg_scan | grep -i "discovered" | tee -a ports_discovered
 
 #############################################################################################################################
 #for service in $(cat services); do searchsploit $service | tee -a searchsploit_$service # create method to remove files if no exploits are found
