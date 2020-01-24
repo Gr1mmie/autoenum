@@ -21,8 +21,8 @@ cat autoenum/aggr_scan/raw | grep "script results" | tee autoenum/aggr_scan/port
 #first things first, update searchsploit
 #searchsploit -u
 # run nmap xml output thru searchsploit as a 'first sweep' and then run services names
-$nmap_aggr -oX autoenum/raw_scan/out
-searchsploit -v --nmap -w autoenum/raw_scan/out | tee -a autoenum/exploits/searchsploit_firstpass
+$nmap_aggr -oX autoenum/aggr_scan/raw_scan/out
+searchsploit -v --nmap -w autoenum/aggr_scan/raw_scan/out | tee -a autoenum/exploits/searchsploit_firstpass
 
 
 # if reg
