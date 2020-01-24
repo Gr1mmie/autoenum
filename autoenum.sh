@@ -2,14 +2,14 @@
 
 IP=$1
 
-nmap_aggr=$(nmap -A -T4 -p- -Pn -v $IP)
-nmap_reg=$(nmap -p- -T4 -Pn -v $IP)
+nmap_aggr="nmap -A -T4 -p- -Pn -v $IP"
+nmap_reg="nmap -p- -T4 -Pn -v $IP"
 
 # add conditional to choose which scan type, set aggresive to default.
 
 # if aggresive
 if [[ ! -d "autoenum" ]];then mkdir autoenum; fi
-if [[ ! -d "autoenum/aggr_scan" ]];then mkdir -p autoenum/aggr_scan; fi
+if [[ ! -d "autoenum/aggr_scan" ]];then mkdir autoenum/aggr_scan; fi
 if [[ ! -d "autoenum/aggr_scan/ports_and_services" ]];then  mkdir autoenum/aggr_scan/ports_and_services; fi
 if [[ ! -d "autoenum/aggr_scan/exploits" ]];then mkdir autoenum/exploits; fi
 $nmap_aggr | tee -a autoenum/aggr_scan/raw
