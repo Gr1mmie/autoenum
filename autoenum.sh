@@ -9,20 +9,20 @@ nmap_reg="nmap -p- -T4 -Pn -v $IP"
 
 # if aggresive
 if [[ ! -d "autoenum" ]];then mkdir autoenum; fi
-if [[ ! -d "autoenum/aggr_scan" ]];then mkdir autoenum/aggr_scan; fi
+if [[ ! -d "autoenum/aggr_scan/raw" ]];then mkdir -p autoenum/aggr_scan/raw; fi
 if [[ ! -d "autoenum/aggr_scan/ports_and_services" ]];then  mkdir autoenum/aggr_scan/ports_and_services; fi
 if [[ ! -d "autoenum/aggr_scan/exploits" ]];then mkdir autoenum/exploits; fi
-$nmap_aggr | tee -a autoenum/aggr_scan/raw
-cat autoenum/aggr_scan/raw | grep -i "discovered" | tee -a autoenum/aggr_scan/ports_and_services/ports_discovered
-cat autoenum/aggr_scan/raw | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' | tee -a autoenum/aggr_scan/ports_and_services/services_running
-cat autoenum/aggr_scan/raw | grep 'OS' | sed '1d' | sed '$d' | cut -d '|' -f 1 | sed '/^$/d' | tee -a autoenum/aggr_scan/ports_and_services/OS_detection
-cat autoenum/aggr_scan/raw | grep "script results" | tee autoenum/aggr_scan/ports_and_services/script_output; cat autoenum/aggr_scan/raw | grep "|" | sed '$d' | tee -a autoenum/aggr_scan/ports_and services/script_output
+$nmap_aggr | tee -a autoenum/aggr_scan/raw/first_pass
+cat autoenum/aggr_scan/raw/first_pass | grep -i "discovered" | tee -a autoenum/aggr_scan/ports_and_services/ports_discovered
+cat autoenum/aggr_scan/raw/first_pass | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' | tee -a autoenum/aggr_scan/ports_and_services/services_running
+cat autoenum/aggr_scan/raw/first_pass | grep 'OS' | sed '1d' | sed '$d' | cut -d '|' -f 1 | sed '/^$/d' | tee -a autoenum/aggr_scan/ports_and_services/OS_detection
+cat autoenum/aggr_scan/raw/first_pass | grep "script results" | tee autoenum/aggr_scan/ports_and_services/script_output; cat autoenum/aggr_scan/raw | grep "|" | sed '$d' | tee -a autoenum/aggr_scan/ports_and_services/script_output
 
 #first things first, update searchsploit
 #searchsploit -u
 # run nmap xml output thru searchsploit as a 'first sweep' and then run services names
-$nmap_aggr -oX autoenum/aggr_scan/raw_scan/out
-searchsploit -v --nmap -w autoenum/aggr_scan/raw_scan/out | tee -a autoenum/exploits/searchsploit_firstpass
+$nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml
+searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/aggr_scan/exploits/searchsploit_nmap
 
 
 # if reg
