@@ -24,16 +24,25 @@ $nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml
 searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/aggr_scan/exploits/searchsploit_nmap
 
 # if website, run nikto and bruteforce dirs using dirsearch to look for specific dirs or just dirbuster and output everything returned
-cat autorecon/aggr_scan/ports_and_services/services_running | grep "http" | tee -a http_found
+cat autoenum/aggr_scan/ports_and_services/services_running | grep "http" | tee -a autoenum/aggr_scan/raw/http_found
 if [ -s 'http_found' ]
-then
-	nikto -h $IP | tee -a autorecon/loot/nikto_output
-	dirb http://$IP | autorecon/loot/dirs
-	rm http_found
-else
-	rm http_found
+	then
+		nikto -h $IP | tee -a autoenum/loot/nikto_output
+		dirb http://$IP | autoenum/loot/dirs
+		rm autoenum/aggr_scan/raw/http_found
+	else
+		rm autoenum/aggr_scan/raw/http_found
 fi
 
+cat autoenum/aggr_scan/ports_and_services/services_running | grep "smb" | tee -a autoenum/aggr_scan/raw/smb_found
+if [ -s 'smb_found' ]
+	then
+		port=$(cat autoenum/aggr_scan/raw/smb_found | cut -d '/' -f 1)
+		nmap -p $port --script= $IP | tee -a autoenum/loot/smb_scripts
+		rm autoenum/aggr_scan/raw/smb_found
+	else
+		rm autoenum/aggr_scan/raw/smb_found
+fi
 #############################################################################################################################
 #for service in $(cat services); do searchsploit $service | tee -a searchsploit_$service # create method to remove files if no exploits are found
 
