@@ -27,8 +27,9 @@ searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/
 cat autoenum/aggr_scan/ports_and_services/services_running | grep "http" | tee -a autoenum/aggr_scan/raw/http_found
 if [ -s 'http_found' ]
 	then
-		nikto -h $IP | tee -a autoenum/loot/nikto_output
-		dirb http://$IP | autoenum/loot/dirs
+		mkdir autpenum/loot/http
+		nikto -h $IP | tee -a autoenum/loot/http/nikto_output
+		dirb http://$IP | autoenum/loot/http/dirs
 		rm autoenum/aggr_scan/raw/http_found
 	else
 		rm autoenum/aggr_scan/raw/http_found
@@ -37,8 +38,11 @@ fi
 cat autoenum/aggr_scan/ports_and_services/services_running | grep "smb" | tee -a autoenum/aggr_scan/raw/smb_found
 if [ -s 'smb_found' ]
 	then
-		port=$(cat autoenum/aggr_scan/raw/smb_found | cut -d '/' -f 1)
-		nmap -p $port --script= $IP | tee -a autoenum/loot/smb_scripts
+		mkdir autoenum/loot/smb
+		nmap --script=smb-check-vulns.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a autoenum/loot/smb/general_vulns
+		nmap --script=smb-enum-shares.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a autoenum/loot/smb/enum_shares
+		nmap --script=smb-enum-users.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a autoenum/loot/smb/enum_users
+		nmap -p 139,445 --script=smb-vuln-ms17-010.nse --script-args=unsafe=1 $IP | tee -a autoenum/loot/smb/eternalblue
 		rm autoenum/aggr_scan/raw/smb_found
 	else
 		rm autoenum/aggr_scan/raw/smb_found
