@@ -48,6 +48,8 @@ fi
 
 
 # IDEAS
+# for searchsploit, pull entire service name and run it thru searchsploit, if nothing, remove a trailing word and see what ahappens, if nothing, remove another word, etc.
+# remove dir/file if empty i.e if no loot or searchsploit returns nothing
 # grep out services and grep out services and their version #, pass that to searchsploit
 # basically pull services on open ports and enum further
 # neatly organize output
