@@ -24,7 +24,7 @@ if [ ! -x "$(command -v gobuster)" ]
 		echo "[+] gobuster not found. Exiting..."
 		exit 1
 fi
-# if aggresive
+# if aggresive (default)
 if [[ ! -d "autoenum" ]];then mkdir autoenum; fi
 if [[ ! -d "autoenum/aggr_scan/raw" ]];then mkdir -p autoenum/aggr_scan/raw; fi
 if [[ ! -d "autoenum/aggr_scan/ports_and_services" ]];then  mkdir -p autoenum/aggr_scan/ports_and_services; fi
