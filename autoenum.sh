@@ -23,8 +23,8 @@ $nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml
 searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/aggr_scan/exploits/searchsploit_nmap
 
 # if website, run nikto and bruteforce dirs using dirsearch to look for specific dirs or just dirbuster and output everything returned
-cat ~/autoenum/aggr_scan/ports_and_services/services_running | grep "http" | tee -a ~/autoenum/aggr_scan/raw/http_found
-if [ -s '~/autoenum/aggr_scan/raw/http_found' ]
+cat autoenum/aggr_scan/ports_and_services/services_running | grep "http" | tee -a autoenum/aggr_scan/raw/http_found
+if [ -s 'autoenum/aggr_scan/raw/http_found' ]
 	then
 		mkdir -p autoenum/loot/http
 		nikto -h $IP | tee -a autoenum/loot/http/nikto_output
@@ -34,8 +34,8 @@ if [ -s '~/autoenum/aggr_scan/raw/http_found' ]
 		rm autoenum/aggr_scan/raw/http_found
 fi
 
-cat ~/autoenum/aggr_scan/ports_and_services/services_running | grep "smb" | tee -a ~/autoenum/aggr_scan/raw/smb_found
-if [ -s '~/autoenum/aggr_scan/raw/smb_found' ]
+cat autoenum/aggr_scan/ports_and_services/services_running | grep "smb" | tee -a autoenum/aggr_scan/raw/smb_found
+if [ -s 'autoenum/aggr_scan/raw/smb_found' ]
 	then
 		mkdir -p autoenum/loot/smb
 		nmap --script=smb-check-vulns.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a autoenum/loot/smb/general_vulns
