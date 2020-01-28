@@ -7,6 +7,23 @@ nmap_reg="nmap -p- -T4 -Pn -v $IP"
 
 # add conditional to choose which scan type, set aggresive to default.
 
+if [ ! -x "$(command -v nmap)" ]
+	then
+		echo "[+] nmap not found. Exiting..."
+		exit 1
+fi
+
+if [ ! -x "$(command -v nikto)" ]
+	then
+		echo "[+] nikto not found. Exiting..."
+		exit 1
+fi
+
+if [ ! -x "$(command -v gobuster)" ]
+	then
+		echo "[+] gobuster not found. Exiting..."
+		exit 1
+fi
 # if aggresive
 if [[ ! -d "autoenum" ]];then mkdir autoenum; fi
 if [[ ! -d "autoenum/aggr_scan/raw" ]];then mkdir -p autoenum/aggr_scan/raw; fi
@@ -23,18 +40,30 @@ $nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml
 searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/aggr_scan/exploits/searchsploit_nmap
 
 # if website, run nikto and bruteforce dirs using dirsearch to look for specific dirs or just dirbuster and output everything returned
-cat autoenum/aggr_scan/ports_and_services/services_running | grep "http" | tee -a autoenum/aggr_scan/raw/http_found
+cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "http" | egrep "80|8080|443|12443|81|82|8081|8082" >> autoenum/aggr_scan/raw/http_found
 if [ -s 'autoenum/aggr_scan/raw/http_found' ]
 	then
 		mkdir -p autoenum/loot/http
-		nikto -h $IP | tee -a autoenum/loot/http/nikto_output
-		dirb http://$IP | autoenum/loot/http/dirs
+		cat autoenum/aggr_scan/raw/http_found | cut -d '/' -f 1 >> autoenum/loot/http/ports
+		if [ -s 'autoenum/loot/http/ports' ]
+			then
+				for port in $(cat autoenum/loot/http/ports)
+					do
+						nikto -h $IP:$port >> autoenum/loot/http/nikto_$port
+						dirb http://$IP:$port >> autoenum/loot/http/dirs_$port
+						rm autoenum/loot/http/ports
+					done
+			else
+				rm autoenum/loot/http/ports
+				nikto -h $IP >> autoenum/loot/http/nikto_output
+				dirb http://$IP >> autoenum/loot/http/dirs
+		fi
 		rm autoenum/aggr_scan/raw/http_found
 	else
 		rm autoenum/aggr_scan/raw/http_found
 fi
 
-cat autoenum/aggr_scan/ports_and_services/services_running | grep "smb" | tee -a autoenum/aggr_scan/raw/smb_found
+cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "smb" >> autoenum/aggr_scan/raw/smb_found
 if [ -s 'autoenum/aggr_scan/raw/smb_found' ]
 	then
 		mkdir -p autoenum/loot/smb
