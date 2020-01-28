@@ -9,13 +9,12 @@ nmap_reg="nmap -p- -T4 -Pn -v $IP"
 
 # if aggresive
 if [[ ! -d "autoenum" ]];then mkdir autoenum; fi
-if [[ ! -d "autoenum/loot" ]];then mkdir autoenum/loot; fi
 if [[ ! -d "autoenum/aggr_scan/raw" ]];then mkdir -p autoenum/aggr_scan/raw; fi
 if [[ ! -d "autoenum/aggr_scan/ports_and_services" ]];then  mkdir -p autoenum/aggr_scan/ports_and_services; fi
 if [[ ! -d "autoenum/aggr_scan/exploits" ]];then mkdir -p autoenum/aggr_scan/exploits; fi
 $nmap_aggr | tee -a autoenum/aggr_scan/raw/first_pass
 cat autoenum/aggr_scan/raw/first_pass | grep -i "discovered" >> autoenum/aggr_scan/ports_and_services/ports_discovered
-cat autoenum/aggr_scan/raw/first_pass | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' >> autoenum/aggr_scan/ports_and_services/services_running
+cat autoenum/aggr_scan/raw/first_pass | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' | sed '/|/,+1 d' >> autoenum/aggr_scan/ports_and_services/services_running
 cat autoenum/aggr_scan/raw/first_pass | grep 'OS' | sed '1d' | sed '$d' | cut -d '|' -f 1 | sed '/^$/d' >> autoenum/aggr_scan/ports_and_services/OS_detection
 cat autoenum/aggr_scan/raw/first_pass | grep "script results" > autoenum/aggr_scan/ports_and_services/script_output; cat autoenum/aggr_scan/raw/first_pass | grep "|" | sed '$d' >>  autoenum/aggr_scan/ports_and_services/script_output
 
@@ -24,10 +23,10 @@ $nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml
 searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/aggr_scan/exploits/searchsploit_nmap
 
 # if website, run nikto and bruteforce dirs using dirsearch to look for specific dirs or just dirbuster and output everything returned
-cat autoenum/aggr_scan/ports_and_services/services_running | grep "http" | tee -a autoenum/aggr_scan/raw/http_found
-if [ -s 'http_found' ]
+cat ~/autoenum/aggr_scan/ports_and_services/services_running | grep "http" | tee -a ~/autoenum/aggr_scan/raw/http_found
+if [ -s '~/autoenum/aggr_scan/raw/http_found' ]
 	then
-		mkdir autpenum/loot/http
+		mkdir -p autoenum/loot/http
 		nikto -h $IP | tee -a autoenum/loot/http/nikto_output
 		dirb http://$IP | autoenum/loot/http/dirs
 		rm autoenum/aggr_scan/raw/http_found
@@ -35,14 +34,14 @@ if [ -s 'http_found' ]
 		rm autoenum/aggr_scan/raw/http_found
 fi
 
-cat autoenum/aggr_scan/ports_and_services/services_running | grep "smb" | tee -a autoenum/aggr_scan/raw/smb_found
-if [ -s 'smb_found' ]
+cat ~/autoenum/aggr_scan/ports_and_services/services_running | grep "smb" | tee -a ~/autoenum/aggr_scan/raw/smb_found
+if [ -s '~/autoenum/aggr_scan/raw/smb_found' ]
 	then
-		mkdir autoenum/loot/smb
+		mkdir -p autoenum/loot/smb
 		nmap --script=smb-check-vulns.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a autoenum/loot/smb/general_vulns
 		nmap --script=smb-enum-shares.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a autoenum/loot/smb/enum_shares
 		nmap --script=smb-enum-users.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a autoenum/loot/smb/enum_users
-		nmap -p 139,445 --script=smb-vuln-ms17-010.nse --script-args=unsafe=1 $IP | tee -a autoenum/loot/smb/eternalblue
+		nmap --script=smb-vuln-ms17-010.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a autoenum/loot/smb/eternalblue
 		rm autoenum/aggr_scan/raw/smb_found
 	else
 		rm autoenum/aggr_scan/raw/smb_found
