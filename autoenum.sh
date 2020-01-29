@@ -34,7 +34,12 @@ cat autoenum/aggr_scan/raw/first_pass | grep -i "discovered" >> autoenum/aggr_sc
 cat autoenum/aggr_scan/raw/first_pass | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' | sed '/|/,+1 d' >> autoenum/aggr_scan/ports_and_services/services_running
 cat autoenum/aggr_scan/raw/first_pass | grep 'OS' | sed '1d' | sed '$d' | cut -d '|' -f 1 | sed '/^$/d' >> autoenum/aggr_scan/ports_and_services/OS_detection
 cat autoenum/aggr_scan/raw/first_pass | grep "script results" > autoenum/aggr_scan/ports_and_services/script_output; cat autoenum/aggr_scan/raw/first_pass | grep "|" | sed '$d' >>  autoenum/aggr_scan/ports_and_services/script_output
+cat autoenum/aggr_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7)}' | awk 'NF' >> autoenum/loot/services
 
+for service in $(cat autoenum/loot/services);do
+	searchsploit -vw $service | tee -a autoenum/aggr_scan/exploits/searchsploit_$service
+	# if nothing found, remove trailing word and re run against searchsploit
+done
 # run nmap xml output thru searchsploit as a 'first sweep' and then run services names
 $nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml
 searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/aggr_scan/exploits/searchsploit_nmap
