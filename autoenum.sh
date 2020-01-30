@@ -76,6 +76,7 @@ if [ -s 'autoenum/aggr_scan/raw/smb_found' ]
 		nmap --script=smb-enum-shares.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a autoenum/loot/smb/enum_shares
 		nmap --script=smb-enum-users.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a autoenum/loot/smb/enum_users
 		nmap --script=smb-vuln-ms17-010.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a autoenum/loot/smb/eternalblue
+		nmap --script smb-vuln-ms08-067.nse --script-args=unsafe=1 -p 445 $IP | tee -a autoenum/loot/smb/08-067
 		rm autoenum/aggr_scan/raw/smb_found
 	else
 		rm autoenum/aggr_scan/raw/smb_found
