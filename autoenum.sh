@@ -34,17 +34,16 @@ cat autoenum/aggr_scan/raw/first_pass | grep -i "discovered" >> autoenum/aggr_sc
 cat autoenum/aggr_scan/raw/first_pass | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' | sed '/|/,+1 d' >> autoenum/aggr_scan/ports_and_services/services_running
 cat autoenum/aggr_scan/raw/first_pass | grep 'OS' | sed '1d' | sed '$d' | cut -d '|' -f 1 | sed '/^$/d' >> autoenum/aggr_scan/ports_and_services/OS_detection
 cat autoenum/aggr_scan/raw/first_pass | grep "script results" > autoenum/aggr_scan/ports_and_services/script_output; cat autoenum/aggr_scan/raw/first_pass | grep "|" | sed '$d' >>  autoenum/aggr_scan/ports_and_services/script_output
-cat autoenum/aggr_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7)}' | awk 'NF' >> autoenum/loot/services
 
 $nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml
 searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/loot/exploits/searchsploit_nmap_first_pass
 
 # searchsploit smart search. need to come up with a generic way to pull entire service names, also want to make it so that if nothing is found with full string, remove trailing word and rerun
-cat autoenum/aggr_scan/ports_and_services/services_running | awk '{print($5,$6,$7,$8,$9)}' | sort -u | awk 'NF' | tee autoenum/loot/services
+cat autoenum/aggr_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7,$8,$9)}' | sort -u | awk 'NF' | tee autoenum/loot/services
 cat autoenum/loot/services | awk '{$1=$1};1' | tr ' ' '-' | tee autoenum/loot/services
-for service in $(cat autoenum/loot/services);do svc=$(echo $service | tr '-' ' ');echo "checking $svc...";sleep 3; searchsploit $svc | tee -a autoenum/loot/exploit/searchsploit_$svc;done
+for service in $(cat autoenum/loot/services);do svc=$(echo $service | tr '-' ' ');echo "checking $svc...";sleep 3; searchsploit $svc | tee -a autoenum/loot/exploits/searchsploit_$svc;done
 
-find autoenum/ -type -d -empty -delete
+find autoenum/ -type d -empty -delete
 
 cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "http" | egrep "80|8080|443|12443|81|82|8081|8082" >> autoenum/aggr_scan/raw/http_found
 if [ -s 'autoenum/aggr_scan/raw/http_found' ]
@@ -85,4 +84,4 @@ fi
 
 # IDEAS
 # implement getopts to allow for multiple nmap profiles
-
+# add some echo's before service enums
