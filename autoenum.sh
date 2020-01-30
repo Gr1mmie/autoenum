@@ -36,15 +36,15 @@ cat autoenum/aggr_scan/raw/first_pass | grep 'OS' | sed '1d' | sed '$d' | cut -d
 cat autoenum/aggr_scan/raw/first_pass | grep "script results" > autoenum/aggr_scan/ports_and_services/script_output; cat autoenum/aggr_scan/raw/first_pass | grep "|" | sed '$d' >>  autoenum/aggr_scan/ports_and_services/script_output
 cat autoenum/aggr_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7)}' | awk 'NF' >> autoenum/loot/services
 
-for service in $(cat autoenum/loot/services);do
-	searchsploit -vw $service | tee -a autoenum/aggr_scan/exploits/searchsploit_$service
-	# if nothing found, remove trailing word and re run against searchsploit
-done
-# run nmap xml output thru searchsploit as a 'first sweep' and then run services names
 $nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml
-searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/aggr_scan/exploits/searchsploit_nmap
+searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/aggr_scan/exploits/searchsploit_nmap_first_pass
 
-# if website, run nikto and bruteforce dirs using dirsearch to look for specific dirs or just dirbuster and output everything returned
+# searchsploit smart search. need to come up with a generic way to pull entire service names, also want to make it so that if nothing is found with full string, remove trailing word and rerun
+#cat autoenum/aggr_scan/ports_and_services/services_running | awk '{print($5,$6,$7,$8)}' | sort -u | awk 'NF' | tee autoenum/loot/services
+#cat autoenum/loot/services | awk '{$1=$1};1' | tr ' ' '-' | tee autoenum/loot/services
+#for service in $(cat autoenum/loot/services);do svc=$(echo $service | tr '-' ' ');echo "checking $svc...";sleep 3; searchsploit $svc;done
+find autoenum/ -type -d -empty -delete
+
 cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "http" | egrep "80|8080|443|12443|81|82|8081|8082" >> autoenum/aggr_scan/raw/http_found
 if [ -s 'autoenum/aggr_scan/raw/http_found' ]
 	then
@@ -80,15 +80,6 @@ if [ -s 'autoenum/aggr_scan/raw/smb_found' ]
 	else
 		rm autoenum/aggr_scan/raw/smb_found
 fi
-#############################################################################################################################
-#for service in $(cat services); do searchsploit $service | tee -a searchsploit_$service # create method to remove files if no exploits are found
-
 
 # IDEAS
-# for searchsploit, pull entire service name and run it thru searchsploit, if nothing, remove a trailing word and see what ahappens, if nothing, remove another word, etc.
-# remove dir/file if empty i.e if no loot or searchsploit returns nothing
-# grep out services and grep out services and their version #, pass that to searchsploit
-# basically pull services on open ports and enum further
-# neatly organize output
-# searchsploit -w returns websites instead of paths, maybe could list the exploits returned and point them to site containing exploit
-# mirror exploit maybe?
+# implement getopts to allow for multiple nmap profiles
