@@ -52,8 +52,9 @@ for service in $(cat autoenum/loot/services);do
 #			searchsploit $svc | tee autoenum/loot/exploits/searchsploit_$svc
 #			if grep -q "Exploits: No Results" "autoenum/loot/exploits/searchsploit_$svc"; then rm autoenum/loot/exploits/searchsploit_$svc;fi
 #	fi
-	rm autoenum/loot/services
+
 done
+rm autoenum/loot/services
 
 find autoenum/ -type d -empty -delete
 
@@ -64,7 +65,7 @@ if [ -s 'autoenum/aggr_scan/raw/http_found' ]
 		cat autoenum/aggr_scan/raw/http_found | cut -d '/' -f 1 >> autoenum/loot/http/ports
 		if [ -s 'autoenum/loot/http/ports' ]
 			then
-				mkdir -p autoenum/loot/http/dir
+				mkdir -p autoenum/loot/http/dirs
 				for port in $(cat autoenum/loot/http/ports)
 					do
 						echo "running nikto on port $port"
