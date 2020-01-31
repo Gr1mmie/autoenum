@@ -70,14 +70,14 @@ if [ -s 'autoenum/aggr_scan/raw/http_found' ]
 						nikto -h $IP:$port >> autoenum/loot/http/nikto_$port &
 						echo "bruteforcing dirs on $IP:$port"
 						gobuster dir -re -t 25 -u $IP:$port -w /usr/share/wordlists/dirb/common.txt -o autoenum/loot/http/dirs/raw &
-						for dir in $(cat autoenum/loot/http/dir); do gobuster dir -re -t 25 -u $dir -w /usr/share/wordlists/dirb/common.txt -o "autoenum/loot/http/dirs/$dir" &;done
+						for dir in $(cat autoenum/loot/http/dirs/raw | cut -d '(' -f 1); do gobuster dir -re -t 25 -u $dir -w /usr/share/wordlists/dirb/common.txt -o "autoenum/loot/http/dirs/$dir" &;done
 					done
 				rm autoenum/loot/http/ports
 			else
 				rm autoenum/loot/http/ports
 				nikto -h $IP >> autoenum/loot/http/nikto_output &
 				gobuster dir -re -t 25 -u $IP -w /usr/share/wordlists/dirb/common.txt -o autoenum/loot/http/dirs/raw &
-				for dir in $(cat autoenum/loot/http/dir); do gobuster dir -re -t 25 -u $dir -w /usr/share/wordlists/dirb/common.txt -o "autoenum/loot/http/dirs/$dir" &;done
+				for dir in $(cat autoenum/loot/http/dirs/raw | cut -d '(' -f 1); do gobuster dir -re -t 25 -u $dir -w /usr/share/wordlists/dirb/common.txt -o "autoenum/loot/http/dirs/$dir" &;done
 		fi
 		rm autoenum/aggr_scan/raw/http_found
 	else
