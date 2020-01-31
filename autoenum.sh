@@ -64,8 +64,8 @@ if [ -s 'autoenum/aggr_scan/raw/http_found' ]
 		mkdir -p autoenum/loot/http
 		cat autoenum/aggr_scan/raw/http_found | cut -d '/' -f 1 >> autoenum/loot/http/ports
 		if [ -s 'autoenum/loot/http/ports' ]
+			mkdir -p autoenum/loot/http/dirs
 			then
-				mkdir -p autoenum/loot/http/dirs
 				for port in $(cat autoenum/loot/http/ports)
 					do
 						echo "running nikto on port $port"
