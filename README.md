@@ -1,6 +1,6 @@
 # autoenum
 
 ## Dependencies
-nmap
-nikto
-gobuster
+* nmap
+* nikto
+* gobuster
