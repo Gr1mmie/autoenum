@@ -58,13 +58,13 @@ rm autoenum/loot/services
 
 find autoenum/ -type d -empty -delete
 
-cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "http" | egrep "80|8080|443|12443|81|82|8081|8082" >> autoenum/aggr_scan/raw/http_found
+cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "http" | egrep "8080|443|12443|81|82|8081|8082" >> autoenum/aggr_scan/raw/http_found
 if [ -s 'autoenum/aggr_scan/raw/http_found' ]
 	then
 		mkdir -p autoenum/loot/http
+		mkdir -p autoenum/loot/http/dirs
 		cat autoenum/aggr_scan/raw/http_found | cut -d '/' -f 1 >> autoenum/loot/http/ports
 		if [ -s 'autoenum/loot/http/ports' ]
-			mkdir -p autoenum/loot/http/dirs
 			then
 				for port in $(cat autoenum/loot/http/ports)
 					do
@@ -72,14 +72,15 @@ if [ -s 'autoenum/aggr_scan/raw/http_found' ]
 						nikto -h $IP:$port >> autoenum/loot/http/nikto_$port &
 						echo "bruteforcing dirs on $IP:$port"
 						gobuster dir -re -t 25 -u $IP:$port -w /usr/share/wordlists/dirb/common.txt -o autoenum/loot/http/dirs/raw &
-						for dir in $(cat autoenum/loot/http/dirs/raw | cut -d '(' -f 1); do gobuster dir -re -t 25 -u $dir -w /usr/share/wordlists/dirb/common.txt -o "autoenum/loot/http/dirs/$dir";done
+#						echo "recursively bruteforcing..."
+#						for dir in $(cat autoenum/loot/http/dirs/raw | cut -d '(' -f 1); do gobuster dir -re -t 25 -u $dir -w /usr/share/wordlists/dirb/common.txt -o "autoenum/loot/http/dirs/$dir";done
 					done
 				rm autoenum/loot/http/ports
 			else
 				rm autoenum/loot/http/ports
 				nikto -h $IP >> autoenum/loot/http/nikto_output &
 				gobuster dir -re -t 25 -u $IP -w /usr/share/wordlists/dirb/common.txt -o autoenum/loot/http/dirs/raw &
-				for dir in $(cat autoenum/loot/http/dirs/raw | cut -d '(' -f 1); do gobuster dir -re -t 25 -u $dir -w /usr/share/wordlists/dirb/common.txt -o "autoenum/loot/http/dirs/$dir";done
+#				for dir in $(cat autoenum/loot/http/dirs/raw | cut -d '(' -f 1); do gobuster dir -re -t 25 -u $dir -w /usr/share/wordlists/dirb/common.txt -o "autoenum/loot/http/dirs/$dir";done
 		fi
 		rm autoenum/aggr_scan/raw/http_found
 	else
