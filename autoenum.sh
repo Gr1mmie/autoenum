@@ -34,8 +34,8 @@ cat autoenum/aggr_scan/raw/first_pass | grep "open" | awk -F 'Discovered' '{prin
 cat autoenum/aggr_scan/raw/first_pass | grep 'OS' | sed '1d' | sed '$d' | cut -d '|' -f 1 | sed '/^$/d' >> autoenum/aggr_scan/ports_and_services/OS_detection
 cat autoenum/aggr_scan/raw/first_pass | grep "script results" > autoenum/aggr_scan/ports_and_services/script_output; cat autoenum/aggr_scan/raw/first_pass | grep "|" | sed '$d' >>  autoenum/aggr_scan/ports_and_services/script_output
 
-$nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml &
-searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/loot/exploits/searchsploit_nmap_first_pass &
+$nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml
+searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/loot/exploits/searchsploit_nmap_first_pass
 
 
 cat autoenum/aggr_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7,$8,$9)}' | sort -u | awk 'NF' | tee autoenum/loot/services
@@ -68,17 +68,17 @@ if [ -s 'autoenum/aggr_scan/raw/http_found' ]
 				for port in $(cat autoenum/loot/http/ports)
 					do
 						echo "running nikto on port $port"
-						nikto -h $IP:$port >> autoenum/loot/http/nikto_$port &
+						nikto -h $IP:$port >> autoenum/loot/http/nikto_$port
 						echo "bruteforcing dirs on $IP:$port"
-						gobuster dir -re -t 25 -u $IP:$port -w /usr/share/wordlists/dirb/common.txt -o autoenum/loot/http/dirs/raw &
+						gobuster dir -re -t 25 -u $IP:$port -w /usr/share/wordlists/dirb/common.txt -o autoenum/loot/http/dirs/raw
 #						echo "recursively bruteforcing..."
 #						for dir in $(cat autoenum/loot/http/dirs/raw | cut -d '(' -f 1); do gobuster dir -re -t 25 -u $dir -w /usr/share/wordlists/dirb/common.txt -o "autoenum/loot/http/dirs/$dir";done
 					done
 				rm autoenum/loot/http/ports
 			else
 				rm autoenum/loot/http/ports
-				nikto -h $IP >> autoenum/loot/http/nikto_output &
-				gobuster dir -re -t 25 -u $IP -w /usr/share/wordlists/dirb/common.txt -o autoenum/loot/http/dirs/raw &
+				nikto -h $IP >> autoenum/loot/http/nikto_output
+				gobuster dir -re -t 25 -u $IP -w /usr/share/wordlists/dirb/common.txt -o autoenum/loot/http/dirs/raw
 #				for dir in $(cat autoenum/loot/http/dirs/raw | cut -d '(' -f 1); do gobuster dir -re -t 25 -u $dir -w /usr/share/wordlists/dirb/common.txt -o "autoenum/loot/http/dirs/$dir";done
 		fi
 		rm autoenum/aggr_scan/raw/http_found
