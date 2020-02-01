@@ -5,7 +5,6 @@ IP=$1
 nmap_aggr="nmap -A -T4 -p- -Pn -v $IP"
 #nmap_reg="nmap -p- -T4 -Pn -v $IP"
 
-# add conditional to choose which scan type, set aggresive to default.
 
 if [ ! -x "$(command -v nmap)" ]
 	then
@@ -24,7 +23,7 @@ if [ ! -x "$(command -v gobuster)" ]
 		echo "[+] gobuster not found. Exiting..."
 		exit 1
 fi
-# if aggresive (default)
+
 if [[ ! -d "autoenum" ]];then mkdir autoenum; fi
 if [[ ! -d "autoenum/aggr_scan/raw" ]];then mkdir -p autoenum/aggr_scan/raw; fi
 if [[ ! -d "autoenum/aggr_scan/ports_and_services" ]];then  mkdir -p autoenum/aggr_scan/ports_and_services; fi
@@ -35,10 +34,10 @@ cat autoenum/aggr_scan/raw/first_pass | grep "open" | awk -F 'Discovered' '{prin
 cat autoenum/aggr_scan/raw/first_pass | grep 'OS' | sed '1d' | sed '$d' | cut -d '|' -f 1 | sed '/^$/d' >> autoenum/aggr_scan/ports_and_services/OS_detection
 cat autoenum/aggr_scan/raw/first_pass | grep "script results" > autoenum/aggr_scan/ports_and_services/script_output; cat autoenum/aggr_scan/raw/first_pass | grep "|" | sed '$d' >>  autoenum/aggr_scan/ports_and_services/script_output
 
-$nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml
-searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/loot/exploits/searchsploit_nmap_first_pass
+$nmap_aggr -oX autoenum/aggr_scan/raw/nmap_out.xml &
+searchsploit -v --nmap -w autoenum/aggr_scan/raw/nmap_out.xml | tee -a autoenum/loot/exploits/searchsploit_nmap_first_pass &
 
-# searchsploit smart search. need to come up with a generic way to pull entire service names, also want to make it so that if nothing is found with full string, remove trailing word and rerun
+
 cat autoenum/aggr_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7,$8,$9)}' | sort -u | awk 'NF' | tee autoenum/loot/services
 cat autoenum/loot/services | awk '{$1=$1};1' | tr ' ' '-' | tee autoenum/loot/services
 for service in $(cat autoenum/loot/services);do
@@ -103,6 +102,4 @@ fi
 
 # IDEAS
 # implement getopts to allow for multiple nmap profiles
-# add some echo's before service enums
-# replace / w/ ' ' in services
 # add way to enum OS, pull from OS_detection, last line after OS:
