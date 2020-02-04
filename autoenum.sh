@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# IDEAS
-# implement getopts to allow for multiple nmap profiles
-# add way to enum OS, pull from OS_detection, last line after OS:
-# if port shoes up as open in discovered but then doesn't show up again, -sV that port
-# custon dirs depedning on IP and profile like sumrecon
 IP=$1
 
 nmap_aggr="nmap -A -T4 -p- -Pn -v $IP"
