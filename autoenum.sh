@@ -1,5 +1,11 @@
 #!/bin/bash
 
+<<<<<<< HEAD
+=======
+IP=$1
+
+nmap_aggr="nmap -A -T4 -p- -Pn -v $IP"
+>>>>>>> 25bc81743cdcc117ab2031f7e374205f6ea01030
 #nmap_reg="nmap -p- -T4 -Pn -v $IP"
 
 halp_meh (){

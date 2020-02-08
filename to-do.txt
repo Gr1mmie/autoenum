@@ -1,0 +1,4 @@
+create profiles
+add OS enum
+sumrecon like dir naming conventions
+add more common services to enum
