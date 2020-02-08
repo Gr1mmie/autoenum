@@ -1,7 +1,5 @@
 #!/bin/bash
 
-IP=$1
-
 #nmap_reg="nmap -p- -T4 -Pn -v $IP"
 
 halp_meh (){
