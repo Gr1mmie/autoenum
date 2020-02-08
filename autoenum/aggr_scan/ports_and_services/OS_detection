@@ -1,0 +1,3 @@
+OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.11 - 4.1
+Service Info: Host: MANTIS; OS: Linux; CPE: cpe:/o:linux:linux_kernel

@@ -1,0 +1,4 @@
+22/tcp  open  ssh         OpenSSH 7.2p2 Ubuntu 4 (Ubuntu Linux; protocol 2.0)
+80/tcp  open  http        Apache httpd 2.4.18 ((Ubuntu))
+139/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+445/tcp open  netbios-ssn Samba smbd 4.3.8-Ubuntu (workgroup: WORKGROUP)

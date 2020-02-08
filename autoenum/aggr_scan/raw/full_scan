@@ -1,0 +1,114 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-02-05 08:50 EST
+NSE: Loaded 151 scripts for scanning.
+NSE: Script Pre-scanning.
+Initiating NSE at 08:50
+Completed NSE at 08:50, 0.00s elapsed
+Initiating NSE at 08:50
+Completed NSE at 08:50, 0.00s elapsed
+Initiating NSE at 08:50
+Completed NSE at 08:50, 0.00s elapsed
+Initiating Parallel DNS resolution of 1 host. at 08:50
+Completed Parallel DNS resolution of 1 host. at 08:50, 0.00s elapsed
+Initiating SYN Stealth Scan at 08:50
+Scanning 10.11.1.74 [65535 ports]
+Discovered open port 80/tcp on 10.11.1.74
+Discovered open port 22/tcp on 10.11.1.74
+Discovered open port 139/tcp on 10.11.1.74
+Discovered open port 445/tcp on 10.11.1.74
+Increasing send delay for 10.11.1.74 from 0 to 5 due to 801 out of 2002 dropped probes since last increase.
+SYN Stealth Scan Timing: About 6.25% done; ETC: 08:59 (0:07:45 remaining)
+SYN Stealth Scan Timing: About 13.21% done; ETC: 08:58 (0:06:41 remaining)
+SYN Stealth Scan Timing: About 19.52% done; ETC: 08:58 (0:06:15 remaining)
+SYN Stealth Scan Timing: About 25.89% done; ETC: 08:58 (0:05:46 remaining)
+SYN Stealth Scan Timing: About 32.58% done; ETC: 08:58 (0:05:13 remaining)
+SYN Stealth Scan Timing: About 38.45% done; ETC: 08:58 (0:04:50 remaining)
+SYN Stealth Scan Timing: About 45.65% done; ETC: 08:59 (0:04:25 remaining)
+SYN Stealth Scan Timing: About 51.71% done; ETC: 08:59 (0:03:59 remaining)
+SYN Stealth Scan Timing: About 57.20% done; ETC: 08:59 (0:03:34 remaining)
+SYN Stealth Scan Timing: About 63.45% done; ETC: 08:59 (0:03:02 remaining)
+SYN Stealth Scan Timing: About 69.12% done; ETC: 08:59 (0:02:35 remaining)
+SYN Stealth Scan Timing: About 74.98% done; ETC: 08:59 (0:02:05 remaining)
+SYN Stealth Scan Timing: About 80.52% done; ETC: 08:59 (0:01:38 remaining)
+SYN Stealth Scan Timing: About 85.98% done; ETC: 08:59 (0:01:11 remaining)
+SYN Stealth Scan Timing: About 92.05% done; ETC: 08:59 (0:00:40 remaining)
+Completed SYN Stealth Scan at 08:59, 508.76s elapsed (65535 total ports)
+Initiating Service scan at 08:59
+Scanning 4 services on 10.11.1.74
+Completed Service scan at 08:59, 11.40s elapsed (4 services on 1 host)
+Initiating OS detection (try #1) against 10.11.1.74
+NSE: Script scanning 10.11.1.74.
+Initiating NSE at 08:59
+Completed NSE at 08:59, 4.65s elapsed
+Initiating NSE at 08:59
+Completed NSE at 08:59, 0.51s elapsed
+Initiating NSE at 08:59
+Completed NSE at 08:59, 0.00s elapsed
+Nmap scan report for 10.11.1.74
+Host is up (0.11s latency).
+Not shown: 65531 closed ports
+PORT    STATE SERVICE     VERSION
+22/tcp  open  ssh         OpenSSH 7.2p2 Ubuntu 4 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 46:20:85:0d:42:d0:88:8d:57:8f:0c:7b:fe:12:ff:8c (RSA)
+|   256 1f:e5:0b:97:32:7d:07:f5:de:f7:34:7d:0d:e0:ba:c6 (ECDSA)
+|_  256 25:7b:9b:15:86:7e:4a:19:04:bc:4f:58:79:9d:55:87 (ED25519)
+80/tcp  open  http        Apache httpd 2.4.18 ((Ubuntu))
+| http-methods: 
+|_  Supported Methods: POST OPTIONS GET HEAD
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Apache2 Ubuntu Default Page: It works
+139/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+445/tcp open  netbios-ssn Samba smbd 4.3.8-Ubuntu (workgroup: WORKGROUP)
+Device type: general purpose
+Running: Linux 3.X|4.X
+OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.11 - 4.1
+Uptime guess: 0.281 days (since Wed Feb  5 02:14:47 2020)
+Network Distance: 2 hops
+TCP Sequence Prediction: Difficulty=259 (Good luck!)
+IP ID Sequence Generation: All zeros
+Service Info: Host: MANTIS; OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Host script results:
+|_clock-skew: mean: 1h28m43s, deviation: 2h53m12s, median: -11m17s
+| nbstat: NetBIOS name: MANTIS, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| Names:
+|   MANTIS<00>           Flags: <unique><active>
+|   MANTIS<03>           Flags: <unique><active>
+|   MANTIS<20>           Flags: <unique><active>
+|   WORKGROUP<00>        Flags: <group><active>
+|_  WORKGROUP<1e>        Flags: <group><active>
+| smb-os-discovery: 
+|   OS: Windows 6.1 (Samba 4.3.8-Ubuntu)
+|   Computer name: mantis
+|   NetBIOS computer name: MANTIS\x00
+|   Domain name: \x00
+|   FQDN: mantis
+|_  System time: 2020-02-05T08:48:21-05:00
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb2-security-mode: 
+|   2.02: 
+|_    Message signing enabled but not required
+| smb2-time: 
+|   date: 2020-02-05T13:48:21
+|_  start_date: N/A
+
+TRACEROUTE
+HOP RTT       ADDRESS
+1   113.75 ms 10.11.1.74
+
+NSE: Script Post-scanning.
+Initiating NSE at 08:59
+Completed NSE at 08:59, 0.00s elapsed
+Initiating NSE at 08:59
+Completed NSE at 08:59, 0.00s elapsed
+Initiating NSE at 08:59
+Completed NSE at 08:59, 0.00s elapsed
+Read data files from: /usr/bin/../share/nmap
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 528.11 seconds
+           Raw packets sent: 68369 (3.009MB) | Rcvd: 68100 (2.734MB)
