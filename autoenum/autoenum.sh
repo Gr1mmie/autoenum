@@ -34,9 +34,7 @@ fi
 
 if [[ "$1" == " " ]] || [[ "$1" != "" ]]; then
 	if [[ ! -d "autoenum" ]];then mkdir autoenum;fi
-
 	if [[ ! -d "autoenum/loot/raw" ]];then mkdir -p autoenum/loot/raw;fi
-
 	if [[ ! -d "autoenum/loot/exploits" ]];then mkdir -p autoenum/loot/exploits;fi
 fi
 
@@ -52,17 +50,23 @@ aggr (){
 	cat autoenum/aggr_scan/raw/full_scan | grep "script results" > autoenum/aggr_scan/ports_and_services/script_output;cat autoenum/aggr_scan/raw/full_scan | grep "|" | sed '$d' >>  autoenum/aggr_scan/ports_and_services/script_output
 	cat autoenum/aggr_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7,$8,$9)}' | sort -u | awk 'NF' >> autoenum/loot/services
 
-	cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "http" | egrep "8080|443|12443|81|82|8081|8082" >> autoenum/loot/raw/http_found
+	cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "http" | egrep "80|8080|443|12443|81|82|8081|8082" >> autoenum/loot/raw/http_found
 	cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "http" >> autoenum/loot/raw/http_found
 	# add line to pull port numbers that aren't the common http ports and put it into ports file here
-	cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "smb" >> autoenum/loot/raw/smb_found
+	declare -a ports=("80" "8080" "443" "12443" "81" "82" "8081" "8082")
+	for port in "${ports[@]}";do
+		if grep -q "$port" "autoenum/loot/raw/http_found"; then
+			cat autoenum/loot/raw/http_found | sed 's/$port//g' | awk 'NF' | sort -u >> autoenum/loot/raw/ports
+		fi
+	done
 
+	cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "smb" >> autoenum/loot/raw/smb_found
 
 	ssploit
 
 	if [ -s 'autoenum/loot/raw/smb_found' ];then smb_enum;fi
 
-	if [ -s 'autoenum/loot/raw/http_found' ];then http_enum;fi
+	if [ -s 'autoenum/loot/raw/http_found' ] || [ -s 'autoenum/loot/raw/ports' ];then http_enum;fi
 
 }
 
@@ -90,10 +94,11 @@ http_enum (){
 	mkdir  autoenum/loot/http
 	mkdir  autoenum/loot/http/dirs
 	echo "[+] http enum starting..."
+	if [ -s 'autoenum/loot/raw/ports' ]; then mv autoenum/loot/raw/ports autoenum/loot/http/ports;fi
 	if [ -s 'autoenum/loot/http/ports' ];then
 		for port in $(cat autoenum/loot/http/ports);do
 			echo "running nikto on port $port"
-			nikto -h $IP:$port >> autoenum/loot/http/nikto_$port &
+			nikto -h $IP >> autoenum/loot/http/nikto_output &
 			echo "bruteforcing dirs on $IP:$port"
 			gobuster dir -re -t 25 -u $IP:$port -w /usr/share/wordlists/dirb/common.txt -o autoenum/loot/http/dirs/dirs_found
 		done
