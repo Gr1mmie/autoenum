@@ -1,14 +1,13 @@
 #!/bin/bash
 
-IP=$1
-
 #nmap_reg="nmap -p- -T4 -Pn -v $IP"
 
 halp_meh (){
 	echo "[*] Usage: ./autoenum [profile] <IP>"
 	echo "[*] Example: ./autoenum -a 127.0.0.1"
 	echo "[*] Profiles:"
-	echo "		[>] -a runs aggresive nmap"
+	echo "		[>] -a runs aggresive scan"
+	echo "		[>] -r runs regular scan"
 }
 
 IP=$2
@@ -34,12 +33,12 @@ if [[ "$IP" == " " ]];then
 	exit 1
 fi
 
-if [[ "$1" == " " ]] || [[ "$1" != "" ]]; then
+if [[ "$1" == " " ]] || [[ "$1" != "-h" ]]; then
 	if [[ ! -d "autoenum" ]];then mkdir autoenum;fi
-
 	if [[ ! -d "autoenum/loot/raw" ]];then mkdir -p autoenum/loot/raw;fi
-
 	if [[ ! -d "autoenum/loot/exploits" ]];then mkdir -p autoenum/loot/exploits;fi
+else
+	halp_meh
 fi
 
 aggr (){
@@ -54,17 +53,19 @@ aggr (){
 	cat autoenum/aggr_scan/raw/full_scan | grep "script results" > autoenum/aggr_scan/ports_and_services/script_output;cat autoenum/aggr_scan/raw/full_scan | grep "|" | sed '$d' >>  autoenum/aggr_scan/ports_and_services/script_output
 	cat autoenum/aggr_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7,$8,$9)}' | sort -u | awk 'NF' >> autoenum/loot/services
 
-	cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "http" | egrep "8080|443|12443|81|82|8081|8082" >> autoenum/loot/raw/http_found
-	cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "http" >> autoenum/loot/raw/http_found
-	# add line to pull port numbers that aren't the common http ports and put it into ports file here
-	cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "smb" >> autoenum/loot/raw/smb_found
+	cat autoenum/aggr_scan/ports_and_services/services_running | grep "http" | egrep "80|8080|443|12443|81|82|8081|8082" >> autoenum/loot/raw/http_found.tmp
+	cat autoenum/aggr_scan/ports_and_services/services_running | grep "http" | sort -u >> autoenum/loot/raw/http_found.tmp
+	cat autoenum/loot/raw/http_found.tmp | sort -u >> autoenum/loot/raw/http_found
 
+	for line in $(cat autoenum/loot/raw/http_found | tr ' ' '-');do echo $line | awk '(!/^80/ && !/^8080/ && !/^443/ && !/^12443/ && !/^81/ && !/^82/)' | tee  autoenum/loot/raw/ports;done
+
+	cat autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "smb" >> autoenum/loot/raw/smb_found
 
 	ssploit
 
 	if [ -s 'autoenum/loot/raw/smb_found' ];then smb_enum;fi
 
-	if [ -s 'autoenum/loot/raw/http_found' ];then http_enum;fi
+	if [ -s 'autoenum/loot/raw/http_found' ] || [ -s 'autoenum/loot/raw/ports' ];then http_enum;fi
 
 }
 
@@ -92,10 +93,12 @@ http_enum (){
 	mkdir  autoenum/loot/http
 	mkdir  autoenum/loot/http/dirs
 	echo "[+] http enum starting..."
+	if [ -s 'autoenum/loot/raw/ports' ]; then mv autoenum/loot/raw/ports autoenum/loot/http/ports;fi
 	if [ -s 'autoenum/loot/http/ports' ];then
+		# curl robots.txt and other interesting universal files
+		echo "firing up nikto"
+		nikto -h $IP >> autoenum/loot/http/nikto_output &
 		for port in $(cat autoenum/loot/http/ports);do
-			echo "running nikto on port $port"
-			nikto -h $IP:$port >> autoenum/loot/http/nikto_$port &
 			echo "bruteforcing dirs on $IP:$port"
 			gobuster dir -re -t 25 -u $IP:$port -w /usr/share/wordlists/dirb/common.txt -o autoenum/loot/http/dirs/dirs_found
 		done
@@ -111,11 +114,28 @@ http_enum (){
 smb_enum (){
 	echo "[+] Starting SMB enum..."
 	mkdir -p autoenum/loot/smb
-	nmap --script=smb-check-vulns.nse --script-args=unsafe=1 -p 139,445 $IP -oN autoenum/loot/smb/general_vulns;sleep 5
-	nmap --script=smb-enum-shares.nse --script-args=unsafe=1 -p 139,445 $IP -oN autoenum/loot/smb/enum_shares;sleep 5
-	nmap --script=smb-enum-users.nse --script-args=unsafe=1 -p 139,445 $IP -oN autoenum/loot/smb/enum_users;sleep 5
-	nmap --script=smb-vuln-ms17-010.nse --script-args=unsafe=1 -p 139,445 $IP -oN autoenum/loot/smb/eternalblue;sleep 5
-	nmap --script smb-vuln-ms08-067.nse --script-args=unsafe=1 -p 445 $IP -oN autoenum/loot/smb/08-067
+	mkdir -p autoenum/loot/smb/shares
+	# general smb vulns
+	nmap --script smb-vuln-ms17-010.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a  autoenum/loot/smb/eternalblue
+	nmap --script smb-vuln-ms08-067.nse --script-args=unsafe=1 -p 445 $IP | tee -a  autoenum/loot/smb/08-067
+	nmap --script smb-vuln* -p 139,445 $IP >> autoenum/loot/smb/gen_vulns
+	#shares n' stuff
+	nmap --script smb-enum-shares -p 139,445 10.11.1.2 $IP -oN autoenum/loot/smb/shares/nmap_shares
+	smbmap -H $IP -R | tee -a autoenum/loot/smb/shares/smbmap
+	smbclient -N -L \\\\$IP | tee -a autoenum/loot/smb/shares/smbclient
+
+	if grep -q "Not enough '\' characters in service" "autoenum/loot/smb/shares/smbclient";then smbclient -N -H \\\\\\$IP | tee autoenum/loot/smb/shares/shares/smbclient;fi
+	if grep -q "Not enough '\' characters in service" "autoenum/loot/smb/shares/smbclient";then smbclient -N -H \\$IP | tee autoenum/loot/smb/shares/smbclient;fi
+	if grep -q "Not enough '\' characters in service" "autoenum/loot/smb/shares/smbclient";then rm autoenum/loot/smb/shares/smbclient; echo "smbclient could not be auotmatically run, rerun smbclient -N -H [IP] manauly" >>  autoenum/loot/smb/notes;fi
+	if grep -q "(Error NT_STATUS_UNSUCCESSFUL)" "autoenum/loot/smb/shares/smbclient";then rm autoenum/loot/smb/shares/smbclient;fi
+
+	if [ -s "autoenum/loot/smb/shares/smbmap" ] || [ -s "autoenum/loot/smb/shares/smbclient" ];then echo "smb shares open to null login, use rpcclient -U "" -N [ip] to run rpc commands" | tee -a autoenum/loot/smb/notes;fi
+
+	find ~ -path '*/autoenum/loot/smb/*' -type f > autoenum/loot/smb/files
+	for file in $(cat autoenum/loot/smb/files);do
+		if grep -q "QUITTING!" "$file" || ! grep -q "Host script results:" "$file" || grep -q "ERROR: Script execution failed" "$file" || grep "segmentation fault" "$file";then rm $file;fi
+	done
+
 	rm autoenum/loot/raw/smb_found
 	echo "[+] SMB enum complete!"
 }
@@ -125,13 +145,20 @@ cleanup (){
 	find autoenum/ -type f -empty -delete
 }
 
-while getopts "a:h" opt; do
+while getopts "a:hr:" opt; do
 	case ${opt} in
 		a )
 		  aggr
 		  cleanup
+		  reset
 		  exit 1
 		  ;;
+		r )
+		  reg
+		  cleanup
+		  reset
+		  exit 1
+	          ;;
 		h )
 		  halp_meh
 		  exit 1
