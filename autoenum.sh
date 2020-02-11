@@ -96,11 +96,14 @@ http_enum (){
 	if [ -s 'autoenum/loot/raw/ports' ]; then mv autoenum/loot/raw/ports autoenum/loot/http/ports;fi
 	if [ -s 'autoenum/loot/http/ports' ];then
 		# curl robots.txt and other interesting universal files
-		echo "firing up nikto"
-		nikto -h $IP >> autoenum/loot/http/nikto_output &
 		for port in $(cat autoenum/loot/http/ports);do
 			echo "bruteforcing dirs on $IP:$port"
 			gobuster dir -re -t 25 -u $IP:$port -w /usr/share/wordlists/dirb/common.txt -o autoenum/loot/http/dirs/dirs_found
+			echo "firing up nikto"
+			nikto -h $IP:$port -ssl >> autoenum/loot/http/nikto_$port &
+			if [ ! grep -q "no webserver found" "autoenum/loot/http/nikto_$port" ];then
+				nikto -h $IP:$port >> autoenum/loot/http/nikto_$port &
+			fi
 		done
 		rm autoenum/loot/http/ports
 	else
@@ -118,18 +121,18 @@ smb_enum (){
 	# general smb vulns
 	nmap --script smb-vuln-ms17-010.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a  autoenum/loot/smb/eternalblue
 	nmap --script smb-vuln-ms08-067.nse --script-args=unsafe=1 -p 445 $IP | tee -a  autoenum/loot/smb/08-067
-	nmap --script smb-vuln* -p 139,445 $IP >> autoenum/loot/smb/gen_vulns
+	nmap --script smb-vuln* -p 139,445 $IP | tee -a  autoenum/loot/smb/gen_vulns
 	#shares n' stuff
 	nmap --script smb-enum-shares -p 139,445 10.11.1.2 $IP -oN autoenum/loot/smb/shares/nmap_shares
-	smbmap -H $IP -R | tee -a autoenum/loot/smb/shares/smbmap
-	smbclient -N -L \\\\$IP | tee -a autoenum/loot/smb/shares/smbclient
+	smbmap -H $IP -R | tee -a autoenum/loot/smb/shares/smbmap_out
+	smbclient -N -L \\\\$IP | tee -a autoenum/loot/smb/shares/smbclient_out
 
 	if grep -q "Not enough '\' characters in service" "autoenum/loot/smb/shares/smbclient";then smbclient -N -H \\\\\\$IP | tee autoenum/loot/smb/shares/shares/smbclient;fi
 	if grep -q "Not enough '\' characters in service" "autoenum/loot/smb/shares/smbclient";then smbclient -N -H \\$IP | tee autoenum/loot/smb/shares/smbclient;fi
 	if grep -q "Not enough '\' characters in service" "autoenum/loot/smb/shares/smbclient";then rm autoenum/loot/smb/shares/smbclient; echo "smbclient could not be auotmatically run, rerun smbclient -N -H [IP] manauly" >>  autoenum/loot/smb/notes;fi
 	if grep -q "(Error NT_STATUS_UNSUCCESSFUL)" "autoenum/loot/smb/shares/smbclient";then rm autoenum/loot/smb/shares/smbclient;fi
 
-	if [ -s "autoenum/loot/smb/shares/smbmap" ] || [ -s "autoenum/loot/smb/shares/smbclient" ];then echo "smb shares open to null login, use rpcclient -U "" -N [ip] to run rpc commands" | tee -a autoenum/loot/smb/notes;fi
+	if [ -s "autoenum/loot/smb/shares/smbmap" ] || [ -s "autoenum/loot/smb/shares/smbclient" ];then echo "smb shares open to null login, use rpcclient -U "" -N [ip] to run rpc commands" >>  autoenum/loot/smb/notes;fi
 
 	find ~ -path '*/autoenum/loot/smb/*' -type f > autoenum/loot/smb/files
 	for file in $(cat autoenum/loot/smb/files);do
