@@ -4,6 +4,8 @@
 * nmap
 * nikto
 * gobuster
+* whatweb
+* wafwoof
 
 ## To run autoenum from anywhere
 ```
