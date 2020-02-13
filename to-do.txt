@@ -4,3 +4,4 @@ create some kinda of also to determinte which OS it is most likely to be and poi
 sumrecon like dir naming conventions
 add more common services to enum
 add enum for snmp,dns, ftp, pop3, imap, kerberos, ldap, ftp, irc, kpasswd, msrpc, rtmp, smtp
+swap out gobuster for dirsearch
