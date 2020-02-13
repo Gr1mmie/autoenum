@@ -2,4 +2,4 @@ create profiles
 add OS enum
 sumrecon like dir naming conventions
 add more common services to enum
-add enum for snmp,dns
+add enum for snmp,dns, ftp, pop3, imap, kerberos, ldap, ftp, irc, kpasswd, msrpc, rtmp, smtp
