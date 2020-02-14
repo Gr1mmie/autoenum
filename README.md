@@ -7,7 +7,6 @@
 * whatweb
 * wafwoof
 * odat
-* reconscan
 
 ## To run autoenum from anywhere
 ```
