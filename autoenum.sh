@@ -66,8 +66,6 @@ aggr (){
 #	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "snmp" | sort -u >> $IP/autoenum/loot/raw/snmp_found
 #	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "dns" | sort -u >> $IP/autoenum/loot/raw/dns_found
 
-	ssploit
-
 #	set enum funcs with nmap first
 	if [ -s '$loot/raw/smb_found' ];then smb_enum;fi
 	if [ -s '$loot/raw/http_found' ] || [ -s 'autoenum/loot/raw/ports' ];then http_enum;fi
