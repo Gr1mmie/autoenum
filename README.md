@@ -6,6 +6,7 @@
 * gobuster
 * whatweb
 * wafwoof
+* odat
 
 ## To run autoenum from anywhere
 ```
