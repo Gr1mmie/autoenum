@@ -1,9 +1,6 @@
-create profiles
+create scan profiles
 add OS enum: windows (XP 7, 8, 8.1, Vista, 2008), FreeBSD,Linux
-create some kinda of also to determinte which OS it is most likely to be and point it to designated enum func
-sumrecon like dir naming conventions
-add more common services to enum
-add enum for snmp,dns, ftp, pop3, imap, kerberos, ldap, ftp, irc, kpasswd, msrpc, rtmp, smtp
+add enum for dns, pop3, imap, kerberos, ldap, irc, kpasswd, msrpc, rtmp
 swap out gobuster for dirsearch for dirbusting
 gobuster dns for dns enum, dnsrecon, dnsenum
-https://github.com/Knowledge-Wisdom-Understanding/Auto-Recon/blob/master/auto-recon.sh - 823
+add eyewitness to scan all ports on http adn directories
