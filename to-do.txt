@@ -6,3 +6,4 @@ gobuster dns for dns enum, dnsrecon, dnsenum
 add eyewitness to scan all ports on http and directories
 fix help msg
 add banner
+fix loot location
