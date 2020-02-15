@@ -12,6 +12,16 @@
 * nikto
 * gobuster
 * whatweb
+* onesixtyone
+* snmp-check
+* snmpwalk
+* fierce
+* dnsenum
+* dnsrecon
+* gobuster
+* snmp-user-enum
+* osscanner
+* 
 * wafwoof
 * odat
 
