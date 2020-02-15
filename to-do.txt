@@ -4,3 +4,5 @@ add enum for dns, pop3, imap, kerberos, ldap, irc, kpasswd, msrpc, rtmp
 swap out gobuster for dirsearch for dirbusting
 gobuster dns for dns enum, dnsrecon, dnsenum
 add eyewitness to scan all ports on http and directories
+fix help msg
+add banner
