@@ -1,6 +1,7 @@
 create scan profiles
-add OS enum: windows (XP 7, 8, 8.1, Vista, 2008), FreeBSD,Linux
-add enum for dns, pop3, imap, kerberos, ldap, irc, kpasswd, msrpc, rtmp
-swap out gobuster for dirsearch for dirbusting
-gobuster dns for dns enum, dnsrecon, dnsenum
-add eyewitness to scan all ports on http and directories
+add OS enum: windows (XP 7, 8, 8.1, Vista, 2008), FreeBSD, Linux, solaris
+add enum for pop3, imap, kerberos, ldap, irc, kpasswd, msrpc, rtmp
+add eyewitness to scan all ports on http and directories (maybe)
+add banner
+make it so that if a tool required is not installed, install it
+make sure tools are up-to-date. if not update
