@@ -18,6 +18,8 @@
 * fierce
 * dnsenum
 * dnsrecon
+* sslscan
+* uniscan
 * snmp-user-enum
 * osscanner
 * wafwoof
