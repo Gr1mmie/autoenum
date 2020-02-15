@@ -21,7 +21,6 @@
 * gobuster
 * snmp-user-enum
 * osscanner
-* 
 * wafwoof
 * odat
 
