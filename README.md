@@ -22,7 +22,7 @@
 * uniscan
 * snmp-user-enum
 * osscanner
-* wafwoof
+* wafw00f
 * odat
 
 ## To run autoenum from anywhere
