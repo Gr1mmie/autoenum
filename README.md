@@ -18,7 +18,6 @@
 * fierce
 * dnsenum
 * dnsrecon
-* gobuster
 * snmp-user-enum
 * osscanner
 * wafwoof
