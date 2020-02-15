@@ -30,7 +30,7 @@ if [ ! -x "$(command -v gobuster)" ];then
 fi
 
 #if [ ! -x "$(command -v whatweb)" ];then
-#        echo "[+] whatweb not found. Exiting..."
+#       echo "[+] whatweb not found. Exiting..."
 #        exit 1
 #fi
 
@@ -102,11 +102,12 @@ else
 fi
 
 banner (){
-	echo "                  --"
-	echo "   ____ _ __  __ / /_ ____   ___   ____   __  __ ____ ___"
-	echo "  / __ `// / / // __// __ \ / _ \ / __ \ / / / // __ `__ \"
-	echo " / /_/ // /_/ // /_ / /_/ //  __// / / // /_/ // / / / / /"
-	echo " \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/"
+	echo '                  --					'
+	echo '   ____ _ __  __ / /_ ____   ___   ____   __  __ ____ ___'
+	echo '  / __ `// / / // __// __ \ / _ \ / __ \ / / / // __ `__ \'
+	echo ' / /_/ // /_/ // /_ / /_/ //  __// / / // /_/ // / / / / /'
+	echo ' \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/'
+	echo "								"
 }
 
 aggr (){
@@ -162,7 +163,7 @@ snmp_enum (){
 
 ldap_enum (){
 	mkdir $loop/ldap
-	nmap -vv -Pn -sV -p 389 --script="(ldap* or ssl*) and not (brute or broadcast or dos or external or fuzzer)" $IP | tee -a $loot/ldap/ldap_scripts
+	nmap -vv -Pn -sV -p 389 --script='(ldap* or ssl*) and not (brute or broadcast or dos or external or fuzzer)' $IP | tee -a $loot/ldap/ldap_scripts
 	#ldapsearch -x -h $rhost -s base namingcontexts | tee -a $loot/ldap/ldapsearch &
 
 }
@@ -279,7 +280,7 @@ smb_enum (){
 	if grep -q "Not enough '\' characters in service" "$loot/smb/shares/smbclient_out";then rm $loot/smb/shares/smbclient_out; echo "smbclient could not be auotmatically run, rerun smbclient -N -H [IP] manauly" >> $loot/smb/notes;fi
 	if grep -q "Error NT_STATUS_UNSUCCESSFUL" "$loot/smb/shares/smbclient_out";then rm $loot/smb/shares/smbclient;fi
 
-	if [ -s "$loot/smb/shares/smbclient_out" ];then echo "smb shares open to null login, use rpcclient -U '' -N [ip] to run rpc commands, use smbmap -u null -p '' -H $IP -R to verify this" >> $loot/smb/notes;fi
+	if [[ -s "$loot/smb/shares/smbclient_out" ]];then echo "smb shares open to null login, use rpcclient -U '' -N [ip] to run rpc commands, use smbmap -u null -p '' -H $IP -R to verify this" >> $loot/smb/notes;fi
 
 	find ~ -path '*/$IP/autoenum/loot/smb/*' -type f > $loot/smb/files
 	for file in $(cat $loot/smb/files);do
@@ -302,11 +303,12 @@ windows_enum (){
 
 
 cleanup (){
+	echo "[+] Cleaning up..."
 	find $IP/autoenum/ -type d -empty -delete
 	find $IP/autoenum/ -type f -empty -delete
 }
 
-while getopts "a:hr:" opt;do
+while getopts "ha:r:" opt;do
 	case ${opt} in
 		a )
 		  aggr
