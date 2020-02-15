@@ -6,7 +6,6 @@
 \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/ 
                                                          
 ```
-
 ## Summary
 An all-in-one recon tool I wrote up for HTB. Currently has only been tested in kali. If you notice a bug or have a feature request not in to-do, please submit an issue. Thanks and enjoy autorecon! 
 
