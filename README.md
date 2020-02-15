@@ -20,5 +20,5 @@
 cp ~/autoenum/autoenum.sh /usr/bin/
 chmod o+x /usr/bin/autoenum.sh
 
-autoenum.sh -h
+autoenum.sh
 ```
