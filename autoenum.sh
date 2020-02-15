@@ -12,6 +12,8 @@ halp_meh (){
 
 IP=$2
 
+# install if not installed, update if not up-to-date (only if root)
+
 if [ ! -x "$(command -v nmap)" ];then
 	echo "[+] nmap not found. Exiting..."
 	exit 1
@@ -27,13 +29,68 @@ if [ ! -x "$(command -v gobuster)" ];then
 	exit 1
 fi
 
+#if [ ! -x "$(command -v whatweb)" ];then
+#        echo "[+] whatweb not found. Exiting..."
+#        exit 1
+#fi
+
+#if [ ! -x "$(command -v onesixtyone)" ];then
+#        echo "[+] onesixtyone not found. Exiting..."
+#        exit 1
+#fi
+
+#if [ ! -x "$(command -v snmp-check)" ];then
+#        echo "[+] snmp-check not found. Exiting..."
+#        exit 1
+#fi
+
+#if [ ! -x "$(command -v snmpwalk)" ];then
+#        echo "[+] snmpwalk not found. Exiting..."
+#        exit 1
+#fi
+
+#if [ ! -x "$(command -v fierce)" ];then
+#        echo "[+] fierce not found. Exiting..."
+#        exit 1
+#fi
+
+#if [ ! -x "$(command -v dnsrecon)" ];then
+#        echo "[+] dnsrecon not found. Exiting..."
+#        exit 1
+#fi
+
+#if [ ! -x "$(command -v dnsenum)" ];then
+#        echo "[+] dnsenum not found. Exiting..."
+#        exit 1
+#fi
+
+#if [ ! -x "$(command -v snmp-user-check)" ];then
+#        echo "[+] snmp-user-check not found. Exiting..."
+#        exit 1
+#fi
+
+#if [ ! -x "$(command -v osscanner)" ];then
+#        echo "[+] osscanner not found. Exiting..."
+#        exit 1
+#fi
+
+#if [ ! -x "$(command -v wafw00f)" ];then
+#        echo "[+] wafw00f not found. Exiting..."
+#        exit 1
+#fi
+
+#if [ ! -x "$(command -v odat)" ];then
+#        echo "[+] odat not found. Exiting..."
+#        exit 1
+#fi
+
 if [[ "$IP" == " " ]];then
 	echo "[-] No IP supplied..."
 	echo "[*] ./autoenum -h for more info"
 	exit 1
 fi
 
-if [[ "$1" == " " ]] || [[ "$1" != "-h" ]]; then
+if [[ ! "$1" == " " ]]; then
 	if [[ ! -d "$IP/autoenum" ]];then mkdir -p $IP/autoenum;fi
 	if [[ ! -d "$IP/autoenum/loot/raw" ]];then
 		mkdir -p $IP/autoenum/loot/raw
@@ -44,73 +101,100 @@ else
 	halp_meh
 fi
 
+banner (){
+	echo "                  --"
+	echo "   ____ _ __  __ / /_ ____   ___   ____   __  __ ____ ___"
+	echo "  / __ `// / / // __// __ \ / _ \ / __ \ / / / // __ `__ \"
+	echo " / /_/ // /_/ // /_ / /_/ //  __// / / // /_/ // / / / / /"
+	echo " \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/"
+}
+
 aggr (){
+	banner
 	nmap_aggr="nmap -A -T4 -p- -Pn -v $IP"
 
 	if [[ ! -d "$IP/autoenum/aggr_scan/raw" ]];then mkdir -p $IP/autoenum/aggr_scan/raw; fi
 	if [[ ! -d "$IP/autoenum/aggr_scan/ports_and_services" ]];then  mkdir -p $IP/autoenum/aggr_scan/ports_and_services; fi
 
-	nmap -sV $IP -oX autoenum/aggr_scan/raw/xml_out & $nmap_aggr | tee $IP/autoenum/aggr_scan/raw/full_scan;searchsploit -v --nmap $IP/autoenum/aggr_scan/raw/xml_out | tee $IP/autoenum/loot/exploits/searchsploit_nmap
+	nmap -sV $IP -oX $IP/autoenum/aggr_scan/raw/xml_out & $nmap_aggr | tee $IP/autoenum/aggr_scan/raw/full_scan;searchsploit -v --nmap $IP/autoenum/aggr_scan/raw/xml_out | tee $IP/autoenum/loot/exploits/searchsploit_nmap
 	cat $IP/autoenum/aggr_scan/raw/full_scan | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' | sed '/|/,+1 d' >> $IP/autoenum/aggr_scan/ports_and_services/services_running
 	cat $IP/autoenum/aggr_scan/raw/full_scan | grep 'OS' | sed '1d' | sed '$d' | cut -d '|' -f 1 | sed '/^$/d' >> $IP/autoenum/aggr_scan/ports_and_services/OS_detection
 	cat $IP/autoenum/aggr_scan/raw/full_scan | grep "script results" > $IP/autoenum/aggr_scan/ports_and_services/script_output;cat $IP/autoenum/aggr_scan/raw/full_scan | grep "|" | sed '$d' >>  $IP/autoenum/aggr_scan/ports_and_services/script_output
 
-	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7,$8,$9)}' | sort -u | awk 'NF' >> $IP/autoenum/loot/services
+#	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7,$8,$9)}' | sort -u | awk 'NF' >> $IP/autoenum/loot/services
 
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | grep "http" | egrep "80|8080|443|12443|81|82|8081|8082" >> $IP/autoenum/loot/raw/http_found.tmp
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | grep "http" | sort -u >> $IP/autoenum/loot/raw/http_found.tmp
 	cat $IP/autoenum/loot/raw/http_found.tmp | sort -u >> $IP/autoenum/loot/raw/http_found;
 	rm $IP/autoenum/loot/raw/http_found.tmp
-	for line in $(cat $loot/raw/http_found | tr ' ' '-');do echo $line | awk '(!/^80/ && !/^8080/ && !/^443/ && !/^12443/ && !/^81/ && !/^82/)' | tee $loot/raw/ports;done
-	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "smb" >> $loot/raw/smb_found
-#	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "snmp" | sort -u >> $IP/autoenum/loot/raw/snmp_found
-#	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "dns" | sort -u >> $IP/autoenum/loot/raw/dns_found
+	for line in $(cat $loot/raw/http_found | tr ' ' '-');do echo $line | awk '(!/^80/ && !/^8080/ && !/^443/ && !/^12443/ && !/^81/ && !/^82/)' >  $loot/raw/ports;done
+	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "smb" > $loot/raw/smb_found
+	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "snmp" > $loot/raw/snmp_found
+#	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "dns" > $loot/raw/dns_found
+	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "ftp" > $loot/raw/ftp_found
+	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "ldap" > $loot/raw/ldap_found
+	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "smtp" > $loot/raw/smtp_found
+	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "oracle" > $loot/raw/oracle_found
 
-#	set enum funcs with nmap first
-	if [ -s '$loot/raw/smb_found' ];then smb_enum;fi
-	if [ -s '$loot/raw/http_found' ] || [ -s 'autoenum/loot/raw/ports' ];then http_enum;fi
-	if [ -s '$loot/raw/snmp_found' ];then snmp_enum;fi
-	if [ -s '$loot/raw/dns_found' ];then dns_enum;fi
-	if [ -s '$loot/raw/ftp_found' ];then ftp_enum;fi
-	if [ -s '$loot/raw/ldap_found' ];then ldap_enum;fi
-	if [ -s '$loot/raw/smtp_found' ];then smtp_enum;fi
-	if [ -s '$loot/raw/oracle_found' ];then oracle_enum;fi
+	if [[ -s "$loot/raw/smb_found" ]];then smb_enum;fi
+	if [[ -s "$loot/raw/http_found" ]] || [ -s "$loot/raw/ports" ];then http_enum;fi
+	if [[ -s "$loot/raw/snmp_found" ]];then snmp_enum;fi
+#	if [[ -s "$loot/raw/dns_found" ]];then dns_enum;fi
+	if [[ -s "$loot/raw/ftp_found" ]];then ftp_enum;fi
+	if [[ -s "$loot/raw/ldap_found" ]];then ldap_enum;fi
+	if [[ -s "$loot/raw/smtp_found" ]];then smtp_enum;fi
+	if [[ -s "$loot/raw/oracle_found" ]];then oracle_enum;fi
 
-	if [ -s '$loot/raw/windows_found' ];then windows_enum;fi
-	if [ -s '$loot/raw/linux_found' ];then linux_enum;fi
+	if [[ -s "$loot/raw/windows_found" ]];then windows_enum;fi
+	if [[ -s "$loot/raw/linux_found" ]];then linux_enum;fi
 }
 
 snmp_enum (){
 	mkdir $loot/snmp
-	onesixtyone -c /usr/share/doc/onesixtyone/dict.txt $IP | tee -a $loot/snmp/pwshelpmenamethis
-	snmp-check -c public -v 1 -d $IP | tee -a $loot/snmp/sumstuffrn
+	onesixtyone -c /usr/share/doc/onesixtyone/dict.txt $IP | tee -a $loot/snmp/snmpenum
+	snmp-check -c public -v 1 -d $IP | tee -a $loot/snmp/snmpenum
 	if grep -q "SNMP request timeout" "$loot/snmp/sumstuffrn";then
 		rm $loot/snmp.sumstuffrn
 		snmpwalk -c public -v2c $IP | tee -a $loot/snmp/uderstuff
-		if grep -q "timeout" "$loot/snmp/uderstuff"; rm $loot/snmp/uderstuff
+		if grep -q "timeout" "$loot/snmp/uderstuff";then rm $loot/snmp/snmpenum;fi
 	fi
 }
 
 ldap_enum (){
-	echo "[-] Work in Progress"
+	mkdir $loop/ldap
+	nmap -vv -Pn -sV -p 389 --script="(ldap* or ssl*) and not (brute or broadcast or dos or external or fuzzer)" $IP | tee -a $loot/ldap/ldap_scripts
+	#ldapsearch -x -h $rhost -s base namingcontexts | tee -a $loot/ldap/ldapsearch &
+
 }
 
 dns_enum (){
-	echo "[-] Work in Progress"
+	# mainly for pentesting use, not neccesary rn for oscp. retest later when adding to this
+	#fierce -dns $IP
+	#dnsenum --enum $IP
+	#dnsrecon -d $IP
+	#gobuster -dns $IP
+	echo "USE FOR PENTESTS ONLY"
 }
 
 ftp_enum (){
 	mkdir -p $loot/ftp
 	echo "[+] Starting FTP enum..."
-#	nmap -sV -Pn -p [insert ftp port here] --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,ftp-syst -v $IP | tee -a  $loot/ftp/out
+	cat $loot/raw/ftp_found | awk '{print($1)}' | cut -d '/' -f 1 > $loot/ftp/port_list
+	for port in $($loot/ftp/port_list);do
+		nmap -sV -Pn -p $port --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,ftp-syst -v $IP | tee -a $loot/ftp/ftp_scripts
+	done
+	rm $loot/ftp/port_list
 	echo "[+] FTP enum complete!"
 }
 
 smtp_enum (){
 	mkdir $loot/smtp
-#	write cmd into notes
-	smtp-user-enum -M VRFY -U /usr/share/metasploit-framework/data/wordlists/unix_users.txt -t $IP | tee -a $loot/smtp/users
-	if grep -q "0 results" "$loot/smtp/users"; rm $loot/smtp/users;fi
+	cat $loot/raw/snmp_found | awk '{print($1)}' | cut -d '/' -f 1 > $loot/smtp/port_list
+	for port in $(cat $loot/smtp/port_list);do
+		smtp-user-enum -M VRFY -U /usr/share/metasploit-framework/data/wordlists/unix_users.txt -t $IP -p $port | tee -a $loot/smtp/users
+	done
+	if grep -q "0 results" "$loot/smtp/users";then rm $loot/smtp/users;fi
+	rm $loot/smtp/port_list
 }
 
 oracle_enum (){
@@ -177,33 +261,33 @@ http_enum (){
 
 smb_enum (){
 	echo "[+] Starting SMB enum..."
-	mkdir -p $IP/autoenum/loot/smb
-	mkdir -p $IP/autoenum/loot/smb/shares
+	mkdir -p $loot/smb
+	mkdir -p $loot/smb/shares
 	# checks for eternal blue and other common smb vulns
-	nmap --script smb-vuln-ms17-010.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a $IP/autoenum/loot/smb/eternalblue
-	if ! grep -q "smb-vuln-ms17-010:" "auotenum/loot/smb/eternalblue"; then rm $IP/autoenum/loot/smb/eternalblue;fi
-	nmap --script smb-vuln-ms08-067.nse --script-args=unsafe=1 -p 445 $IP | $IP/tee -a autoenum/loot/smb/08-067
-	if ! grep -q "smb-vuln-ms08-067:" "autoenum/loot/smb/08-067";then rm $IP/autoenum/loot/smb/08-067;fi
-	nmap --script smb-vuln* -p 139,445 $IP | tee -a $IP/autoenum/loot/smb/gen_vulns
+	nmap --script smb-vuln-ms17-010.nse --script-args=unsafe=1 -p 139,445 $IP | tee -a $loot/smb/eternalblue
+	if ! grep -q "smb-vuln-ms17-010:" "auotenum/loot/smb/eternalblue"; then rm $loot/smb/eternalblue;fi
+	nmap --script smb-vuln-ms08-067.nse --script-args=unsafe=1 -p 445 $IP | tee -a $loot/smb/08-067
+	if ! grep -q "smb-vuln-ms08-067:" "autoenum/loot/smb/08-067";then rm $loot/smb/08-067;fi
+	nmap --script smb-vuln* -p 139,445 $IP | tee -a $loot/smb/gen_vulns
 	#shares n' stuff
-	nmap --script smb-enum-shares -p 139,445 $IP | tee -a $IP/autoenum/loot/smb/shares/nmap_shares
-	smbmap -H $IP -R | tee -a $IP/autoenum/loot/smb/shares/smbmap_out
-	smbclient -N -L \\\\$IP | tee -a $IP/autoenum/loot/smb/shares/smbclient_out
+	nmap --script smb-enum-shares -p 139,445 $IP | tee -a $loot/smb/shares/nmap_shares
+	smbmap -H $IP -R | tee -a $loot/smb/shares/smbmap_out
+	smbclient -N -L \\\\$IP | tee -a $loot/smb/shares/smbclient_out
 
-	if grep -q "Not enough '\' characters in service" "$IP/autoenum/loot/smb/shares/smbclient_out";then smbclient -N -H \\\\\\$IP | tee -a $IP/autoenum/loot/smb/shares/smbclient_out;fi
-	if grep -q "Not enough '\' characters in service" "$IP/autoenum/loot/smb/shares/smbclient_out";then smbclient -N -H \\$IP | tee -a $IP/autoenum/loot/smb/shares/smbclient_out;fi
-	if grep -q "Not enough '\' characters in service" "$IP/autoenum/loot/smb/shares/smbclient_out";then rm $IP/autoenum/loot/smb/shares/smbclient_out; echo "smbclient could not be auotmatically run, rerun smbclient -N -H [IP] manauly" >> $IP/autoenum/loot/smb/notes;fi
-	if grep -q "(Error NT_STATUS_UNSUCCESSFUL)" "$IP/autoenum/loot/smb/shares/smbclient_out";then rm $IP/autoenum/loot/smb/shares/smbclient;fi
+	if grep -q "Not enough '\' characters in service" "$loot/smb/shares/smbclient_out";then smbclient -N -H \\\\\\$IP | tee -a $loot/smb/shares/smbclient_out;fi
+	if grep -q "Not enough '\' characters in service" "$loot/smb/shares/smbclient_out";then smbclient -N -H \\$IP | tee -a $loot/smb/shares/smbclient_out;fi
+	if grep -q "Not enough '\' characters in service" "$loot/smb/shares/smbclient_out";then rm $loot/smb/shares/smbclient_out; echo "smbclient could not be auotmatically run, rerun smbclient -N -H [IP] manauly" >> $loot/smb/notes;fi
+	if grep -q "Error NT_STATUS_UNSUCCESSFUL" "$loot/smb/shares/smbclient_out";then rm $loot/smb/shares/smbclient;fi
 
-	if [ -s "$IP/autoenum/loot/smb/shares/smbclient_out" ];then echo "smb shares open to null login, use rpcclient -U "" -N [ip] to run rpc commands, use smbmap -u null -p "" -H $IP -R to verify this" >> $IP/autoenum/loot/smb/notes;fi
+	if [ -s "$loot/smb/shares/smbclient_out" ];then echo "smb shares open to null login, use rpcclient -U '' -N [ip] to run rpc commands, use smbmap -u null -p '' -H $IP -R to verify this" >> $loot/smb/notes;fi
 
-	find ~ -path '*/$IP/autoenum/loot/smb/*' -type f > $IP/autoenum/loot/smb/files
-	for file in $(cat $IP/autoenum/loot/smb/files);do
+	find ~ -path '*/$IP/autoenum/loot/smb/*' -type f > $loot/smb/files
+	for file in $(cat $loot/smb/files);do
 		if grep -q "QUITTING!" "$file" || grep -q "ERROR: Script execution failed" "$file" || grep "segmentation fault" "$file";then rm $file;fi
 	done
 
-	rm $IP/autoenum/loot/smb/files
-	rm $IP/autoenum/loot/raw/smb_found
+	rm $loot/smb/files
+	rm $loot/raw/smb_found
 	echo "[+] SMB enum complete!"
 }
 
@@ -222,12 +306,12 @@ cleanup (){
 	find $IP/autoenum/ -type f -empty -delete
 }
 
-while getopts "a:hr:" opt; do
+while getopts "a:hr:" opt;do
 	case ${opt} in
 		a )
 		  aggr
 		  cleanup
-		  reset
+		  #reset
 		  exit 1
 		  ;;
 		r )
