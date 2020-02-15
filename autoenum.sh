@@ -10,6 +10,16 @@ halp_meh (){
 	echo "		[>] -r runs regular scan"
 }
 
+banner (){
+        echo '                  --                                      '
+        echo '   ____ _ __  __ / /_ ____   ___   ____   __  __ ____ ___'
+        echo '  / __ `// / / // __// __ \ / _ \ / __ \ / / / // __ `__ \'
+        echo ' / /_/ // /_/ // /_ / /_/ //  __// / / // /_/ // / / / / /'
+        echo ' \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/'
+        echo "                                                          "
+}
+
+
 IP=$2
 
 # install if not installed, update if not up-to-date (only if root)
@@ -101,15 +111,6 @@ else
 	halp_meh
 fi
 
-banner (){
-	echo '                  --					'
-	echo '   ____ _ __  __ / /_ ____   ___   ____   __  __ ____ ___'
-	echo '  / __ `// / / // __// __ \ / _ \ / __ \ / / / // __ `__ \'
-	echo ' / /_/ // /_/ // /_ / /_/ //  __// / / // /_/ // / / / / /'
-	echo ' \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/'
-	echo "								"
-}
-
 aggr (){
 	banner
 	nmap_aggr="nmap -A -T4 -p- -Pn -v $IP"
@@ -181,10 +182,11 @@ ftp_enum (){
 	mkdir -p $loot/ftp
 	echo "[+] Starting FTP enum..."
 	cat $loot/raw/ftp_found | awk '{print($1)}' | cut -d '/' -f 1 > $loot/ftp/port_list
-	for port in $($loot/ftp/port_list);do
+	for port in $(cat $loot/ftp/port_list);do
 		nmap -sV -Pn -p $port --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,ftp-syst -v $IP | tee -a $loot/ftp/ftp_scripts
 	done
 	rm $loot/ftp/port_list
+	rm $loot/raw/ftp_found
 	echo "[+] FTP enum complete!"
 }
 
@@ -313,7 +315,7 @@ while getopts "ha:r:" opt;do
 		a )
 		  aggr
 		  cleanup
-		  #reset
+		  reset
 		  exit 1
 		  ;;
 		r )
