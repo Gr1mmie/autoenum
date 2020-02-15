@@ -3,7 +3,6 @@ add OS enum: windows (XP 7, 8, 8.1, Vista, 2008), FreeBSD,Linux
 add enum for dns, pop3, imap, kerberos, ldap, irc, kpasswd, msrpc, rtmp
 swap out gobuster for dirsearch for dirbusting
 gobuster dns for dns enum, dnsrecon, dnsenum
-add eyewitness to scan all ports on http and directories
-fix help msg
+add eyewitness to scan all ports on http and directories (maybe)
 add banner
-fix loot location
+make it so that if a tool required is not installed, install it
