@@ -10,7 +10,7 @@
 Autoenum is a recon tool which performs automatic enumeration of services discovered. I built this to save some time during CTFs and pen testing environments (i.e. HTB, VulnHub, OSCP). Could also be used in a real-life pentesting engagment. Currently has only been tested in kali. If you notice a bug or have a feature request not in to-do, please submit an issue. Thanks and enjoy autoenum!  
 
 ## Dependencies
-Your OS may or may not have some installed by default. not to worry, autoenum recognizes tools tat aren't installed and install them for you, even updating if thay aren't up-to-date!
+Your OS may or may not have some installed by default. Not to worry, autoenum recognizes tools not installed and install them for you, even updating if they aren't up-to-date!
 
 * nmap
 * nikto
@@ -34,5 +34,5 @@ Your OS may or may not have some installed by default. not to worry, autoenum re
 cp ~/autoenum/autoenum.sh /usr/bin/
 chmod o+x /usr/bin/autoenum.sh
 
-autoenum.sh
+autoenum.sh -h 
 ```
