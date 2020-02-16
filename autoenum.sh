@@ -14,6 +14,9 @@ banner (){
         echo '  / __ `// / / // __// __ \ / _ \ / __ \ / / / // __ `__ \'
         echo ' / /_/ // /_/ // /_ / /_/ //  __// / / // /_/ // / / / / /'
         echo ' \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/'
+	echo "								"
+	echo "Courtesy of: Grimmie					"
+	echo "Version: 1.4						"
         echo "                                                          "
 }
 
@@ -21,6 +24,7 @@ banner (){
 IP=$2
 
 # install if not installed, update if not up-to-date (only if root)
+# check if root, if so, install
 
 if [ ! -x "$(command -v nmap)" ];then
 	echo "[+] nmap not found. Exiting..."
