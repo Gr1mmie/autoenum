@@ -1,13 +1,11 @@
 #!/bin/bash
 
-#nmap_reg="nmap -p- -T4 -Pn -v $IP"
-
 halp_meh (){
 	echo "[*] Usage: ./autoenum [profile] <IP>"
 	echo "[*] Example: ./autoenum -a 127.0.0.1"
 	echo "[*] Profiles:"
-	echo "		[>] -a runs aggresive scan"
-	echo "		[>] -r runs regular scan"
+	echo "		[>] -a runs aggresive scan. scans all ports aggresively"
+	echo "		[>] -r runs regular scan. scans all ports normally, no scripts and checking only for OS"
 }
 
 banner (){
@@ -110,6 +108,48 @@ if [[ ! "$1" == " " ]]; then
 else
 	halp_meh
 fi
+
+reg (){
+	banner
+	nmap_reg="nmap -p- -O -T4 -Pn -v $IP"
+
+	if [[ ! -d "$IP/autoenum/reg_scan/raw" ]];then mkdir -p $IP/autoenum/reg_scan/raw; fi
+        if [[ ! -d "$IP/autoenum/reg_scan/ports_and_services" ]];then  mkdir -p $IP/autoenum/reg_scan/ports_and_services; fi
+
+        nmap -sV $IP -oX $IP/autoenum/reg_scan/raw/xml_out & $nmap_aggr | tee $IP/autoenum/reg_scan/raw/full_scan;searchsploit -v --nmap $IP/autoenum/reg_scan/raw/xml_out | tee $IP/autoenum/loot/exploits/searchsploit_nmap
+        cat $IP/autoenum/reg_scan/raw/full_scan | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' | sed '/|/,+1 d' >> $IP/autoenum/reg_scan/ports_and_services/services_running
+        cat $IP/autoenum/reg_scan/raw/full_scan | grep 'OS' | sed '1d' | sed '$d' | cut -d '|' -f 1 | sed '/^$/d' >> $IP/autoenum/reg_scan/ports_and_services/OS_detection
+        cat $IP/autoenum/reg_scan/raw/full_scan | grep "script results" > $IP/autoenum/reg_scan/ports_and_services/script_output;cat $IP/autoenum/reg_scan/raw/full_scan | grep "|" | sed '$d' >>  $IP/autoenum/reg_scan/ports_and_servic>
+
+#       cat $IP/autoenum/reg_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7,$8,$9)}' | sort -u | awk 'NF' >> $IP/autoenum/loot/services
+
+        cat $IP/autoenum/reg_scan/ports_and_services/services_running | grep "http" | egrep "80|8080|443|12443|81|82|8081|8082" >> $IP/autoenum/loot/raw/http_found.tmp
+        cat $IP/autoenum/reg_scan/ports_and_services/services_running | grep "http" | sort -u >> $IP/autoenum/loot/raw/http_found.tmp
+        cat $IP/autoenum/loot/raw/http_found.tmp | sort -u >> $IP/autoenum/loot/raw/http_found;
+        rm $IP/autoenum/loot/raw/http_found.tmp
+        for line in $(cat $loot/raw/http_found | tr ' ' '-');do echo $line | awk '(!/^80/ && !/^8080/ && !/^443/ && !/^12443/ && !/^81/ && !/^82/)' >  $loot/raw/ports;done
+        cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "smb" > $loot/raw/smb_found
+        cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "snmp" > $loot/raw/snmp_found
+#       cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "dns" > $loot/raw/dns_found
+        cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "ftp" > $loot/raw/ftp_found
+        cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "ldap" > $loot/raw/ldap_found
+        cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "smtp" > $loot/raw/smtp_found
+        cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "oracle" > $loot/raw/oracle_found
+
+        if [[ -s "$loot/raw/smb_found" ]];then smb_enum;fi
+        if [[ -s "$loot/raw/http_found" ]] || [ -s "$loot/raw/ports" ];then http_enum;fi
+        if [[ -s "$loot/raw/snmp_found" ]];then snmp_enum;fi
+#       if [[ -s "$loot/raw/dns_found" ]];then dns_enum;fi
+        if [[ -s "$loot/raw/ftp_found" ]];then ftp_enum;fi
+        if [[ -s "$loot/raw/ldap_found" ]];then ldap_enum;fi
+        if [[ -s "$loot/raw/smtp_found" ]];then smtp_enum;fi
+        if [[ -s "$loot/raw/oracle_found" ]];then oracle_enum;fi
+
+        if [[ -s "$loot/raw/windows_found" ]];then windows_enum;fi
+        if [[ -s "$loot/raw/linux_found" ]];then linux_enum;fi
+
+
+}
 
 aggr (){
 	banner
