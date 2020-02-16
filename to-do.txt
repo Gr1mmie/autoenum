@@ -5,3 +5,4 @@ add eyewitness to scan all ports on http and directories (maybe)
 add banner
 make it so that if a tool required is not installed, install it
 make sure tools are up-to-date. if not update
+make gobuster dir recursive only for 200s 1 lvl
