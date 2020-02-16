@@ -7,9 +7,11 @@
                                                          
 ```
 ## Summary
-An all-in-one recon tool I wrote up for OSCP. Currently has only been tested in kali. If you notice a bug or have a feature request not in to-do, please submit an issue. Thanks and enjoy autoenum!  
+Autoenum is a recon tool which performs automatic enumeration of services discovered. I built this to save some time during CTFs and pen testing environments (i.e. HTB, VulnHub, OSCP). Could also be used in a real-life pentesting engagment. Currently has only been tested in kali. If you notice a bug or have a feature request not in to-do, please submit an issue. Thanks and enjoy autoenum!  
 
 ## Dependencies
+Your OS may or may not have some installed by default. Not to worry, autoenum recognizes tools not installed and install them for you, even updating if they aren't up-to-date!
+
 * nmap
 * nikto
 * gobuster
@@ -32,5 +34,5 @@ An all-in-one recon tool I wrote up for OSCP. Currently has only been tested in 
 cp ~/autoenum/autoenum.sh /usr/bin/
 chmod o+x /usr/bin/autoenum.sh
 
-autoenum.sh
+autoenum.sh -h 
 ```

@@ -1,8 +1,7 @@
-create scan profiles
-add OS enum: windows (XP 7, 8, 8.1, Vista, 2008), FreeBSD, Linux, solaris
-add enum for pop3, imap, kerberos, ldap, irc, kpasswd, msrpc, rtmp
+create more scan profiles (see https://github.com/perfectra1n/AutoBountyRecon/blob/master/config/port-scan-profiles.toml for ideas)
+add OS enum: windows, FreeBSD, Linux, solaris
+add enum for pop3, imap, kerberos, ldap, msrpc, rtmp, cups
 add eyewitness to scan all ports on http and directories (maybe)
-add banner
 make it so that if a tool required is not installed, install it
 make sure tools are up-to-date. if not update
 make gobuster dir recursive only for 200s 1 lvl
