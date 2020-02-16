@@ -1,4 +1,4 @@
-create scan profiles
+create more scan profiles
 add OS enum: windows (XP 7, 8, 8.1, Vista, 2008), FreeBSD, Linux, solaris
 add enum for pop3, imap, kerberos, ldap, irc, kpasswd, msrpc, rtmp
 add eyewitness to scan all ports on http and directories (maybe)
