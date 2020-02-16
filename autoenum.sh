@@ -5,7 +5,7 @@ halp_meh (){
 	echo "[*] Example: ./autoenum -a 127.0.0.1"
 	echo "[*] Profiles:"
 	echo "		[>] -a runs aggresive scan. scans all ports aggresively"
-	echo "		[>] -r runs regular scan. scans all ports normally, no scripts and checking only for OS"
+	echo "		[>] -r runs regular scan. scans all ports normally, no scripts and checks only for OS"
 }
 
 banner (){
@@ -119,7 +119,7 @@ reg (){
         nmap -sV $IP -oX $IP/autoenum/reg_scan/raw/xml_out & $nmap_aggr | tee $IP/autoenum/reg_scan/raw/full_scan;searchsploit -v --nmap $IP/autoenum/reg_scan/raw/xml_out | tee $IP/autoenum/loot/exploits/searchsploit_nmap
         cat $IP/autoenum/reg_scan/raw/full_scan | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' | sed '/|/,+1 d' >> $IP/autoenum/reg_scan/ports_and_services/services_running
         cat $IP/autoenum/reg_scan/raw/full_scan | grep 'OS' | sed '1d' | sed '$d' | cut -d '|' -f 1 | sed '/^$/d' >> $IP/autoenum/reg_scan/ports_and_services/OS_detection
-        #cat $IP/autoenum/reg_scan/raw/full_scan | grep "script results" > $IP/autoenum/reg_scan/ports_and_services/script_output;cat $IP/autoenum/reg_scan/raw/full_scan | grep "|" | sed '$d' >>  $IP/autoenum/reg_scan/ports_and_services/script_output
+#        cat $IP/autoenum/reg_scan/raw/full_scan | grep "script results" > $IP/autoenum/reg_scan/ports_and_services/script_output;cat $IP/autoenum/reg_scan/raw/full_scan | grep "|" | sed '$d' >>  $IP/autoenum/reg_scan/ports_and_services/script_output
 
 #       cat $IP/autoenum/reg_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7,$8,$9)}' | sort -u | awk 'NF' >> $IP/autoenum/loot/services
 
@@ -254,10 +254,13 @@ oracle_enum (){
 }
 
 http_enum (){
-	mkdir  -p $IP/autoenum/loot/http
-	mkdir  -p $IP/autoenum/loot/http/dirs
-	mkdir -p $IP/autonenum/loot/http/whatweb
+	mkdir -p $IP/autoenum/loot/http
+	mkdir -p $IP/autoenum/loot/http/dirs
+	mkdir -p $IP/autoenum/loot/http/whatweb
 	mkdir -p $IP/autoenum/loot/http/wafw00f
+	mkdir -p $IP/autoenum/loot/http/ssl
+	mkdir -p $IP/autoenum/loot/http/nikto
+	mkdir -p $IP/autoenum/loot/http/uniscan
 	echo "[+] http enum starting..."
 	if [ -s 'autoenum/loot/raw/ports' ]; then mv $IP/autoenum/loot/raw/ports autoenum/loot/http/ports;rm $IP/autoenum/loot/raw/ports;fi
 	if [ -s 'autoenum/loot/http/ports' ];then
@@ -282,11 +285,11 @@ http_enum (){
 		done
 		rm $IP/autoenum/loot/http/ports
 	else
-		uniscan -u http://$IP -qweds | tee -a $IP/autoenum/loot/http/uniscan_out &
+		uniscan -u http://$IP -qweds | tee -a $IP/autoenum/loot/http/uniscan/out
 		echo "[+] checking ssl for possible holes"
 		sslscan $IP:80 | tee -a $IP/autoenum/loot/http/sslinfo
 		echo "[+] firing up nikto"
-		nikto -h $IP >> $IP/autoenum/loot/http/nikto_output &
+		nikto -h $IP >> $IP/autoenum/loot/http/nikto/nikto_output &
 		echo "[+] bruteforcing dirs on $IP"
 		gobuster dir -re -t 25 -u $IP -w /usr/share/wordlists/dirb/common.txt -o $IP/autoenum/loot/http/dirs/dirs_found
 		echo "[+] checking for robot.txt files"
@@ -295,7 +298,7 @@ http_enum (){
 		echo "[+] checking for plugin data"
 		whatweb -v -a 3 http://$IP | tee -a $IP/autoenum/loot/http/whatweb/plugins
 		echo "[+] checking for wafs"
-		wafw00f http://$IP | tee -a  $IP/autoenum/loot/http/wafw00fwafs
+		wafw00f http://$IP | tee -a  $IP/autoenum/loot/http/wafw00f/wafs
 		if grep -q "No WAF detected by the generic detection" "$IP/autenum/loot/http/wafw00f/wafs";then rm $IP/autoenum/loot/http/wafw00f/wafs;fi
 	fi
 		echo "[+] http enum complete!"
