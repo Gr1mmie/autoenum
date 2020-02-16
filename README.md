@@ -7,7 +7,7 @@
                                                          
 ```
 ## Summary
-An all-in-one recon tool I wrote up for OSCP. Currently has only been tested in kali. If you notice a bug or have a feature request not in to-do, please submit an issue. Thanks and enjoy autoenum! 
+An all-in-one recon tool I wrote up for OSCP. Currently has only been tested in kali. If you notice a bug or have a feature request not in to-do, please submit an issue. Thanks and enjoy autoenum!  
 
 ## Dependencies
 * nmap
