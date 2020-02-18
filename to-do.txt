@@ -9,3 +9,4 @@ add some of my other tools maybe(?) i.e grepkrawler for sites, sonar dns(?), etc
 if no arg is passed, run tool as "shell" (SET format ...ish)
 add support for hostnames and check if an IP is being passed, if not refer to help menu
 add usage modules. (-ptest, -ctf, etc. kinda like gobuster)
+add "multi-processes" (i know you know what i mean)
