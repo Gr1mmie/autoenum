@@ -6,3 +6,5 @@ make it so that if a tool required is not installed, install it
 make sure tools are up-to-date. if not update
 make gobuster dir recursive only for 200s 1 lvl
 add some of my other tools maybe(?) i.e grepkrawler for sites, sonar dns(?), etc.
+if no arg is passed, run tool as "shell" (SET format ...ish)
+add support for hostnames and check in an IP is being passed, if not refer to help menu
