@@ -9,15 +9,19 @@ halp_meh (){
 }
 
 banner (){
-        echo '                  --                                      '
-        echo '   ____ _ __  __ / /_ ____   ___   ____   __  __ ____ ___'
-        echo '  / __ `// / / // __// __ \ / _ \ / __ \ / / / // __ `__ \'
-        echo ' / /_/ // /_/ // /_ / /_/ //  __// / / // /_/ // / / / / /'
-        echo ' \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/'
-	echo "								"
-	echo "Courtesy of: Grimmie					"
-	echo "Version: 1.4						"
+#	echo "									"
+        echo '                   --                                       '
+        echo '    ____ _ __  __ / /_ ____   ___   ____   __  __ ____ ___  '
+        echo '   / __ `// / / // __// __ \ / _ \ / __ \ / / / // __ `__ \ '
+        echo '  / /_/ // /_/ // /_ / /_/ //  __// / / // /_/ // / / / / / '
+        echo '  \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/  '
+	echo "							           "
+	echo " Author: Grimmie						   "
+	echo " Version: 1.4						   "
+	echo "									"
+	echo "##############################################################"
         echo "                                                          "
+	sleep 3
 }
 
 
@@ -27,8 +31,9 @@ IP=$2
 # check if root, if so, install
 
 if [ ! -x "$(command -v nmap)" ];then
-	echo "[+] nmap not found. Exiting..."
-	exit 1
+	echo "[+] nmap not detected...installing"
+	sudo apt-get install nmap -y > installing
+	rm installing
 fi
 
 if [ ! -x "$(command -v nikto)" ];then
@@ -67,34 +72,44 @@ fi
 #fi
 
 #if [ ! -x "$(command -v dnsrecon)" ];then
-#        echo "[+] dnsrecon not found. Exiting..."
-#        exit 1
+#        echo "[+] dnsrecon not found. installing..."
+#        sudo apt-get installl dnsrecon -y > installing;rm installing
 #fi
 
 #if [ ! -x "$(command -v dnsenum)" ];then
-#        echo "[+] dnsenum not found. Exiting..."
-#        exit 1
+#        echo "[+] dnsenum not found. installing..."
+#        sudo apt-get install dnsenum -y > installing;rm installing
 #fi
 
-#if [ ! -x "$(command -v snmp-user-check)" ];then
-#        echo "[+] snmp-user-check not found. Exiting..."
-#        exit 1
+#if [ ! -x "$(command -v oscanner)" ];then
+#        echo "[+] oscanner not found. installing..."
+#        sudo apt-get install oscanner -y > installing;rm installing
 #fi
 
-#if [ ! -x "$(command -v osscanner)" ];then
-#        echo "[+] osscanner not found. Exiting..."
-#        exit 1
-#fi
-
-#if [ ! -x "$(command -v wafw00f)" ];then
-#        echo "[+] wafw00f not found. Exiting..."
-#        exit 1
-#fi
+if [ ! -x "$(command -v wafw00f)" ];then
+        echo "[+] wafw00f not found. install..."
+	sudo apt-get install wafw00f -y > installing;rm installing
+fi
 
 #if [ ! -x "$(command -v odat)" ];then
-#        echo "[+] odat not found. Exiting..."
-#        exit 1
+#        echo "[+] odat not detected. installing..."
+#	sudo apt-get install odat -y > installing;rm installing
 #fi
+
+upgrade (){
+	apt-get install nmap > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nmap -y > installing;fi rm installed installing
+	apt-get install nikto > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nikto -y > installing;fi rm installed installing
+	apt-get install wafw00f > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install wafw00f -y > installing;fi rm installed installing
+	apt-get install gobuster > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install gobuster -y > installing;fi rm installed installing
+	apt-get install odat > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install odat -y > installing;fi rm installed installing
+	apt-get install oscanner > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install oscanner -y > installing;fi rm installed installing
+	#snmp-check,snmpwalk
+	apt-get install dnsenum > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsenum -y > installing;fi rm installed installing
+	apt-get install dnsrecon > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsrecon -y > installing;fi rm installed installing
+	apt-get install fierce > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install fierce -y > installing;fi rm installed installing
+	apt-get install onesixtyone > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install onesixtyone -y > installing;fi rm installed installing
+	apt-get install wahtweb > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install whatweb -y > installing;fi rm installed installing
+}
 
 if [[ "$IP" == " " ]];then
 	echo "[-] No IP supplied..."
@@ -357,7 +372,7 @@ cleanup (){
 	find $IP/autoenum/ -type f -empty -delete
 }
 
-while getopts "ha:r:" opt;do
+while getopts "hba:r:" opt;do
 	case ${opt} in
 		a )
 		  aggr
@@ -373,6 +388,10 @@ while getopts "ha:r:" opt;do
 	          ;;
 		h )
 		  halp_meh
+		  exit 1
+		  ;;
+		b )
+		  banner
 		  exit 1
 		  ;;
 
