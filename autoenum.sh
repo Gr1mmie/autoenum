@@ -46,10 +46,10 @@ if [ ! -x "$(command -v gobuster)" ];then
 	exit 1
 fi
 
-#if [ ! -x "$(command -v whatweb)" ];then
-#       echo "[+] whatweb not found. Exiting..."
-#        exit 1
-#fi
+if [ ! -x "$(command -v whatweb)" ];then
+       echo "[+] whatweb not found. installing..."
+	sudo apt-get install whatweb -y > installing;rm installing
+fi
 
 #if [ ! -x "$(command -v onesixtyone)" ];then
 #        echo "[+] onesixtyone not found. Exiting..."
@@ -97,19 +97,21 @@ fi
 #fi
 
 upgrade (){
-	apt-get install nmap > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nmap -y > installing;fi rm installed installing
-	apt-get install nikto > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nikto -y > installing;fi rm installed installing
-	apt-get install wafw00f > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install wafw00f -y > installing;fi rm installed installing
-	apt-get install gobuster > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install gobuster -y > installing;fi rm installed installing
-	apt-get install odat > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install odat -y > installing;fi rm installed installing
-	apt-get install oscanner > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install oscanner -y > installing;fi rm installed installing
+	apt-get install nmap > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nmap -y > installing;fi rm installed installing &
+	apt-get install nikto > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nikto -y > installing;fi rm installed installing &
+	apt-get install wafw00f > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install wafw00f -y > installing;fi rm installed installing &
+	apt-get install gobuster > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install gobuster -y > installing;fi rm installed installing &
+	apt-get install odat > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install odat -y > installing;fi rm installed installing &
+	apt-get install oscanner > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install oscanner -y > installing;fi rm installed installing &
 	#snmp-check,snmpwalk
-	apt-get install dnsenum > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsenum -y > installing;fi rm installed installing
-	apt-get install dnsrecon > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsrecon -y > installing;fi rm installed installing
-	apt-get install fierce > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install fierce -y > installing;fi rm installed installing
-	apt-get install onesixtyone > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install onesixtyone -y > installing;fi rm installed installing
-	apt-get install wahtweb > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install whatweb -y > installing;fi rm installed installing
+	apt-get install dnsenum > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsenum -y > installing;fi rm installed installing &
+	apt-get install dnsrecon > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsrecon -y > installing;fi rm installed installing &
+	apt-get install fierce > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install fierce -y > installing;fi rm installed installing &
+	apt-get install onesixtyone > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install onesixtyone -y > installing;fi rm installed installing &
+	apt-get install wahtweb > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install whatweb -y > installing;fi rm installed installing &
+	wait
 }
+
 
 if [[ "$IP" == " " ]];then
 	echo "[-] No IP supplied..."
@@ -130,6 +132,7 @@ fi
 
 reg (){
 	banner
+	upgrade
 	nmap_reg="nmap -p- -O -T4 -Pn -v $IP"
 
 	if [[ ! -d "$IP/autoenum/reg_scan/raw" ]];then mkdir -p $IP/autoenum/reg_scan/raw; fi
@@ -172,6 +175,7 @@ reg (){
 
 aggr (){
 	banner
+	upgrade
 	nmap_aggr="nmap -A -T4 -p- -Pn -v $IP"
 
 	if [[ ! -d "$IP/autoenum/aggr_scan/raw" ]];then mkdir -p $IP/autoenum/aggr_scan/raw; fi
@@ -219,12 +223,15 @@ snmp_enum (){
 		snmpwalk -c public -v2c $IP | tee -a $loot/snmp/uderstuff
 		if grep -q "timeout" "$loot/snmp/uderstuff";then rm $loot/snmp/snmpenum;fi
 	fi
+	echo "onesixtyone -c /usr/share/doc/onesixtyone/dict.txt $IP" >> $loot/snmp/cmds_run
+	echo "snmp-check -c public -v 1 -d $IP" >> $loot/snmp/cmds_run
 }
 
 ldap_enum (){
-	mkdir $loop/ldap
+	mkdir $loot/ldap
 	nmap -vv -Pn -sV -p 389 --script='(ldap* or ssl*) and not (brute or broadcast or dos or external or fuzzer)' $IP | tee -a $loot/ldap/ldap_scripts
 	#ldapsearch -x -h $rhost -s base namingcontexts | tee -a $loot/ldap/ldapsearch &
+	echo "nmap -vv -Pn -sV -p 389 --script='(ldap* or ssl*) and not (brute or broadcast or dos or external or fuzzer)' $IP" >> $loot/ldap/cmds_run
 
 }
 
@@ -244,6 +251,8 @@ ftp_enum (){
 	for port in $(cat $loot/ftp/port_list);do
 		nmap -sV -Pn -p $port --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,ftp-syst -v $IP | tee -a $loot/ftp/ftp_scripts
 	done
+	touch $loot/ftp/cmds_run
+	echo "nmap -sV -Pn -p $port --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,ftp-syst -v $IP " >> $loot/ftp/cmds_run
 	rm $loot/ftp/port_list
 	rm $loot/raw/ftp_found
 	echo "[+] FTP enum complete!"
@@ -256,6 +265,7 @@ smtp_enum (){
 		smtp-user-enum -M VRFY -U /usr/share/metasploit-framework/data/wordlists/unix_users.txt -t $IP -p $port | tee -a $loot/smtp/users
 	done
 	if grep -q "0 results" "$loot/smtp/users";then rm $loot/smtp/users;fi
+	echo "smtp-user-enum -M VRFY -U /usr/share/metasploit-framework/data/wordlists/unix_users.txt -t $IP -p $port" >> $loot/smtp/cmds_run
 	rm $loot/smtp/port_list
 }
 
@@ -320,6 +330,15 @@ http_enum (){
 		wafw00f http://$IP | tee -a  $IP/autoenum/loot/http/wafw00f/wafs
 		if grep -q "No WAF detected by the generic detection" "$IP/autenum/loot/http/wafw00f/wafs";then rm $IP/autoenum/loot/http/wafw00f/wafs;fi
 	fi
+		touch $loot/http/cmds_run
+		echo "uniscan -u http://$IP -qweds" >> $loot/http/cmds_run
+		echo "sslscan $IP:80 " >> $loot/http/cmds_run
+		echo "nikto -h $IP" >> $loot/http/cmds_run
+		echo "gobuster dir -re -t 25 -u $IP -w /usr/share/wordlists/dirb/common.txt" >> $loot/http/cmds_run
+		echo "curl $IP/robots.txt" >> $loot/http/cmds_run
+		echo "whatweb -v -a 3 http://$IP" >> $loot/http/cmds_run
+		echo "wafw00f http://$IP" >> $loot/http/cmds_run
+
 		echo "[+] http enum complete!"
 		rm $IP/autoenum/loot/raw/http_found
 }
@@ -350,6 +369,14 @@ smb_enum (){
 	for file in $(cat $loot/smb/files);do
 		if grep -q "QUITTING!" "$file" || grep -q "ERROR: Script execution failed" "$file" || grep "segmentation fault" "$file";then rm $file;fi
 	done
+
+	touch $loot/smb/cmds_run
+	echo "nmap --script smb-vuln-ms17-010.nse --script-args=unsafe=1 -p 139,445 $IP " >> $loot/smb/cmds_run
+	echo "nmap --script smb-vuln-ms08-067.nse --script-args=unsafe=1 -p 445 $IP" >> $loot/smb/cmds_run
+	echo "nmap --script smb-vuln* -p 139,445 $IP" >> $loot/smb/cmds_run
+	echo "nmap --script smb-enum-shares -p 139,445 $IP" >> $loot/smb/cmds_run
+	echo "smbmap -H $IP -R " >> $loot/smb/cmds_run
+	echo "smbclient -N -L \\\\$IP " >> $loot/smb/cmds_run
 
 	rm $loot/smb/files
 	rm $loot/raw/smb_found
