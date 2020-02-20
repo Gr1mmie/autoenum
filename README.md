@@ -53,7 +53,7 @@ Your OS may or may not have some installed by default. Not to worry, autoenum re
 * sslscan
 * uniscan
 * snmp-user-enum
-* osscanner
+* oscanner
 * wafw00f
 * odat
 * searchsploit
