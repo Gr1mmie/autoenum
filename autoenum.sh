@@ -21,7 +21,7 @@ banner (){
 	echo "									"
 	echo "##############################################################"
         echo "                                                          "
-	sleep 3
+	sleep 1.5
 }
 
 
@@ -97,18 +97,18 @@ fi
 
 upgrade (){
 	echo "[*] Checking if anything requires updates, this may take a few minutes...."
-	apt-get install nmap > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nmap -y > installing; rm installed installing;fi &
-	apt-get install nikto > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nikto -y > installing; rm installed installing;fi &
-	apt-get install wafw00f > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install wafw00f -y > installing; rm installed installing;fi &
-	apt-get install gobuster > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install gobuster -y > installing; rm installed installing;fi &
-	apt-get install odat > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install odat -y > installing; rm installed installing;fi &
-	apt-get install oscanner > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install oscanner -y > installing; rm installed installing;fi &
+	apt-get install nmap >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nmap -y >> installing; rm installed installing;fi &
+	apt-get install nikto >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nikto -y >> installing; rm installed installing;fi &
+	apt-get install wafw00f >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install wafw00f -y >> installing; rm installed installing;fi &
+	apt-get install gobuster >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install gobuster -y >> installing; rm installed installing;fi &
+	apt-get install odat >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install odat -y >> installing; rm installed installing;fi &
+	apt-get install oscanner >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install oscanner -y >> installing; rm installed installing;fi &
 	#snmp-check,snmpwalk
-	apt-get install dnsenum > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsenum -y > installing; rm installed installing;fi &
-	apt-get install dnsrecon > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsrecon -y > installing; rm installed installing;fi &
-	apt-get install fierce > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install fierce -y > installing; rm installed installing;fi &
-	apt-get install onesixtyone > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install onesixtyone -y > installing; rm installed installing;fi &
-	apt-get install wahtweb > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install whatweb -y > installing; rm installed installing;fi &
+	apt-get install dnsenum >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsenum -y >> installing; rm installed installing;fi &
+	apt-get install dnsrecon >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsrecon -y >> installing; rm installed installing;fi &
+	apt-get install fierce >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install fierce -y >> installing; rm installed installing;fi &
+	apt-get install onesixtyone >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install onesixtyone -y >> installing; rm installed installing;fi &
+	apt-get install whatweb >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install whatweb -y >> installing; rm installed installing;fi &
 	wait
 }
 
@@ -414,6 +414,7 @@ cleanup (){
 	echo "[+] Cleaning up..."
 	find $IP/autoenum/ -type d -empty -delete
 	find $IP/autoenum/ -type f -empty -delete
+	rm installed
 }
 
 while getopts "hba:r:" opt;do
