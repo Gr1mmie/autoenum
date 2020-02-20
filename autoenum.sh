@@ -31,19 +31,18 @@ IP=$2
 # check if root, if so, install
 
 if [ ! -x "$(command -v nmap)" ];then
-	echo "[+] nmap not detected...installing"
-	sudo apt-get install nmap -y > installing
-	rm installing
+	echo "[+] nmap not detected...Installing"
+	sudo apt-get install nmap -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v nikto)" ];then
-	echo "[+] nikto not found. Exiting..."
-	exit 1
+	echo "[+] nikto not found. Installing..."
+	sudo apt-get install nikto -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v gobuster)" ];then
-	echo "[+] gobuster not found. Exiting..."
-	exit 1
+	echo "[+] gobuster not found. Installing..."
+	sudo apt-get install gobuster -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v whatweb)" ];then
@@ -51,64 +50,65 @@ if [ ! -x "$(command -v whatweb)" ];then
 	sudo apt-get install whatweb -y > installing;rm installing
 fi
 
-#if [ ! -x "$(command -v onesixtyone)" ];then
-#        echo "[+] onesixtyone not found. Exiting..."
-#        exit 1
-#fi
+if [ ! -x "$(command -v onesixtyone)" ];then
+        echo "[+] onesixtyone not found. Installing..."
+        sudo apt-get install onesixtyone -y > installing;rm installing
+fi
 
-#if [ ! -x "$(command -v snmp-check)" ];then
-#        echo "[+] snmp-check not found. Exiting..."
-#        exit 1
-#fi
+if [ ! -x "$(command -v snmp-check)" ];then
+        echo "[+] snmp-check not found. Installing..."
+        sudo apt-get install snmp-check -y > installing;rm installing
+fi
 
-#if [ ! -x "$(command -v snmpwalk)" ];then
-#        echo "[+] snmpwalk not found. Exiting..."
-#        exit 1
-#fi
+if [ ! -x "$(command -v snmpwalk)" ];then
+        echo "[+] snmpwalk not found. Installing..."
+        sudo apt-get install snmpwalk -y > installing;rm installing
+fi
 
-#if [ ! -x "$(command -v fierce)" ];then
-#        echo "[+] fierce not found. Exiting..."
-#        exit 1
-#fi
+if [ ! -x "$(command -v fierce)" ];then
+        echo "[+] fierce not found. Installing..."
+        sudo apt-get install fierce -y > installing;rm installing
+fi
 
-#if [ ! -x "$(command -v dnsrecon)" ];then
-#        echo "[+] dnsrecon not found. installing..."
-#        sudo apt-get installl dnsrecon -y > installing;rm installing
-#fi
+if [ ! -x "$(command -v dnsrecon)" ];then
+        echo "[+] dnsrecon not found. Installing..."
+        sudo apt-get installl dnsrecon -y > installing;rm installing
+fi
 
-#if [ ! -x "$(command -v dnsenum)" ];then
-#        echo "[+] dnsenum not found. installing..."
-#        sudo apt-get install dnsenum -y > installing;rm installing
-#fi
+if [ ! -x "$(command -v dnsenum)" ];then
+        echo "[+] dnsenum not found. Installing..."
+        sudo apt-get install dnsenum -y > installing;rm installing
+fi
 
-#if [ ! -x "$(command -v oscanner)" ];then
-#        echo "[+] oscanner not found. installing..."
-#        sudo apt-get install oscanner -y > installing;rm installing
-#fi
+if [ ! -x "$(command -v oscanner)" ];then
+        echo "[+] oscanner not found. Installing..."
+        sudo apt-get install oscanner -y > installing;rm installing
+fi
 
 if [ ! -x "$(command -v wafw00f)" ];then
-        echo "[+] wafw00f not found. install..."
+        echo "[+] wafw00f not found. Installing..."
 	sudo apt-get install wafw00f -y > installing;rm installing
 fi
 
-#if [ ! -x "$(command -v odat)" ];then
-#        echo "[+] odat not detected. installing..."
-#	sudo apt-get install odat -y > installing;rm installing
-#fi
+if [ ! -x "$(command -v odat)" ];then
+        echo "[+] odat not detected. installing..."
+	sudo apt-get install odat -y > installing;rm installing
+fi
 
 upgrade (){
-	apt-get install nmap > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nmap -y > installing;fi rm installed installing &
-	apt-get install nikto > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nikto -y > installing;fi rm installed installing &
-	apt-get install wafw00f > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install wafw00f -y > installing;fi rm installed installing &
-	apt-get install gobuster > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install gobuster -y > installing;fi rm installed installing &
-	apt-get install odat > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install odat -y > installing;fi rm installed installing &
-	apt-get install oscanner > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install oscanner -y > installing;fi rm installed installing &
+	echo "[*] Checking if anything requires updates, this may take a few minutes...."
+	apt-get install nmap > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nmap -y > installing; rm installed installing;fi &
+	apt-get install nikto > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install nikto -y > installing; rm installed installing;fi &
+	apt-get install wafw00f > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install wafw00f -y > installing; rm installed installing;fi &
+	apt-get install gobuster > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install gobuster -y > installing; rm installed installing;fi &
+	apt-get install odat > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install odat -y > installing; rm installed installing;fi &
+	apt-get install oscanner > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install oscanner -y > installing; rm installed installing;fi &
 	#snmp-check,snmpwalk
-	apt-get install dnsenum > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsenum -y > installing;fi rm installed installing &
-	apt-get install dnsrecon > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsrecon -y > installing;fi rm installed installing &
-	apt-get install fierce > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install fierce -y > installing;fi rm installed installing &
-	apt-get install onesixtyone > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install onesixtyone -y > installing;fi rm installed installing &
-	apt-get install wahtweb > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install whatweb -y > installing;fi rm installed installing &
+	apt-get install dnsenum > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsenum -y > installing; rm installed installing;fi &
+	apt-get install dnsrecon > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install dnsrecon -y > installing; rm installed installing;fi &
+	apt-get install fierce > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install fierce -y > installing; rm installed installing;fi &
+	apt-get install onesixtyone > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install onesixtyone -y > installing; rm installed installing;fi &
+	apt-get install wahtweb > installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install whatweb -y > installing; rm installed installing;fi &
 	wait
 }
 
@@ -217,22 +217,30 @@ aggr (){
 snmp_enum (){
 	mkdir $loot/snmp
 	onesixtyone -c /usr/share/doc/onesixtyone/dict.txt $IP | tee -a $loot/snmp/snmpenum
-	snmp-check -c public -v 1 -d $IP | tee -a $loot/snmp/snmpenum
-	if grep -q "SNMP request timeout" "$loot/snmp/sumstuffrn";then
-		rm $loot/snmp.sumstuffrn
+	snmp-check -c public -v 1 -d $IP | tee -a $loot/snmp/snmpcheck
+	if grep -q "SNMP request timeout" "$loot/snmp/snmpcheck";then
+		rm $loot/snmp/snmpcheck
 		snmpwalk -c public -v2c $IP | tee -a $loot/snmp/uderstuff
-		if grep -q "timeout" "$loot/snmp/uderstuff";then rm $loot/snmp/snmpenum;fi
+		echo "snmpwalk -c public -v2c $IP" >> $loot/snmp/cmds_run &
+		if grep -q "timeout" "$loot/snmp/uderstuff";then rm $loot/snmp/uderstuff;else cp $loot/snmp/uderstuff $loot/snmp/snmpenum;fi
+	else
+		cp $loot/snmp/snmpcheck $loot/snmp/snmpenum
 	fi
-	echo "onesixtyone -c /usr/share/doc/onesixtyone/dict.txt $IP" >> $loot/snmp/cmds_run
-	echo "snmp-check -c public -v 1 -d $IP" >> $loot/snmp/cmds_run
+	echo "onesixtyone -c /usr/share/doc/onesixtyone/dict.txt $IP" >> $loot/snmp/cmds_run &
+	echo "snmp-check -c public $IP" >> $loot/snmp/cmds_run &
+	wait
+
+	rm $IP/autoenum/loot/raw/snmp_found
 }
 
 ldap_enum (){
 	mkdir $loot/ldap
 	nmap -vv -Pn -sV -p 389 --script='(ldap* or ssl*) and not (brute or broadcast or dos or external or fuzzer)' $IP | tee -a $loot/ldap/ldap_scripts
 	#ldapsearch -x -h $rhost -s base namingcontexts | tee -a $loot/ldap/ldapsearch &
-	echo "nmap -vv -Pn -sV -p 389 --script='(ldap* or ssl*) and not (brute or broadcast or dos or external or fuzzer)' $IP" >> $loot/ldap/cmds_run
+	echo "nmap -vv -Pn -sV -p 389 --script='(ldap* or ssl*) and not (brute or broadcast or dos or external or fuzzer)' $IP" >> $loot/ldap/cmds_run &
+	wait
 
+	rm $IP/autoenum/loot/raw/ldap_found
 }
 
 dns_enum (){
@@ -252,10 +260,13 @@ ftp_enum (){
 		nmap -sV -Pn -p $port --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,ftp-syst -v $IP | tee -a $loot/ftp/ftp_scripts
 	done
 	touch $loot/ftp/cmds_run
-	echo "nmap -sV -Pn -p $port --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,ftp-syst -v $IP " >> $loot/ftp/cmds_run
+	echo "nmap -sV -Pn -p $port --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,ftp-syst -v $IP " >> $loot/ftp/cmds_run &
+	wait
+
 	rm $loot/ftp/port_list
 	rm $loot/raw/ftp_found
-	echo "[+] FTP enum complete!"
+	rm $IP/autoenum/loot/raw/ftp_found
+	echo "[+] FTP enum complete"
 }
 
 smtp_enum (){
@@ -265,8 +276,11 @@ smtp_enum (){
 		smtp-user-enum -M VRFY -U /usr/share/metasploit-framework/data/wordlists/unix_users.txt -t $IP -p $port | tee -a $loot/smtp/users
 	done
 	if grep -q "0 results" "$loot/smtp/users";then rm $loot/smtp/users;fi
-	echo "smtp-user-enum -M VRFY -U /usr/share/metasploit-framework/data/wordlists/unix_users.txt -t $IP -p $port" >> $loot/smtp/cmds_run
+	echo "smtp-user-enum -M VRFY -U /usr/share/metasploit-framework/data/wordlists/unix_users.txt -t $IP -p $port" >> $loot/smtp/cmds_run &
+	wait
+
 	rm $loot/smtp/port_list
+	rm $IP/autoenum/loot/raw/smtp_found
 }
 
 oracle_enum (){
@@ -280,6 +294,7 @@ oracle_enum (){
         ./odat.py tnscmd -s $rhost -p 1521 --version | tee -a $loot/oracle/odat_enum
         ./odat.py tnscmd -s $rhost -p 1521 --status | tee -a $loot/oracle/odat_enum
         ./odat.py sidguesser -s $rhost -p 1521 | tee -a $loot/oracle/odat_enum
+	rm $IP/autoenum/loot/raw/oracle_found
 }
 
 http_enum (){
@@ -296,7 +311,7 @@ http_enum (){
 		# curl robots.txt and other interesting universal files, add sslscan
 		for port in $(cat $IP/autoenum/loot/http/ports);do
 			echo "[+] checking ssl for possible holes"
-			sslscan $IP:$port | tee -a $IP/autoenum/loot/http/sslscan_$port
+			sslscan $IP:$port | tee -a $IP/autoenum/loot/http/sslscan_$port 
 			echo "[+] bruteforcing dirs on $IP:$port"
 			gobuster dir -re -t 25 -u $IP:$port -w /usr/share/wordlists/dirb/common.txt -o $IP/autoenum/loot/http/dirs/dirs_found
 			echo "[+] firing up nikto"
@@ -305,7 +320,7 @@ http_enum (){
 				nikto -h $IP:$port >> $IP/autoenum/loot/http/nikto_$port &
 			fi
 			echo "[+] checking for robots.txt files"
-			curl $IP:$port/robots.txt >> $IP/autoenum/loot/http/robots
+			curl $IP:$port/robots.txt >> $IP/autoenum/loot/http/robots &
 			if ! grep -q "disallow" "autoenum/loot/http/robots";then rm $IP/autoenum/loot/http/robots;fi
 			echo "[+] checking for plugin data"
 			whatweb -v -a 3 http://$IP:$port | tee -a $IP/autoenum/loot/http/whatweb/plugins_$port
@@ -322,7 +337,7 @@ http_enum (){
 		echo "[+] bruteforcing dirs on $IP"
 		gobuster dir -re -t 25 -u $IP -w /usr/share/wordlists/dirb/common.txt -o $IP/autoenum/loot/http/dirs/dirs_found
 		echo "[+] checking for robot.txt files"
-		curl $IP/robots.txt >> $IP/autoenum/loot/http/robots
+		curl $IP/robots.txt >> $IP/autoenum/loot/http/robots &
 		if ! grep -q "disallow" "autoenum/loot/http/robots";then rm $IP/autoenum/loot/http/robots;fi
 		echo "[+] checking for plugin data"
 		whatweb -v -a 3 http://$IP | tee -a $IP/autoenum/loot/http/whatweb/plugins
@@ -331,13 +346,14 @@ http_enum (){
 		if grep -q "No WAF detected by the generic detection" "$IP/autenum/loot/http/wafw00f/wafs";then rm $IP/autoenum/loot/http/wafw00f/wafs;fi
 	fi
 		touch $loot/http/cmds_run
-		echo "uniscan -u http://$IP -qweds" >> $loot/http/cmds_run
-		echo "sslscan $IP:80 " >> $loot/http/cmds_run
-		echo "nikto -h $IP" >> $loot/http/cmds_run
-		echo "gobuster dir -re -t 25 -u $IP -w /usr/share/wordlists/dirb/common.txt" >> $loot/http/cmds_run
-		echo "curl $IP/robots.txt" >> $loot/http/cmds_run
-		echo "whatweb -v -a 3 http://$IP" >> $loot/http/cmds_run
-		echo "wafw00f http://$IP" >> $loot/http/cmds_run
+		echo "uniscan -u http://$IP -qweds" >> $loot/http/cmds_run &
+		echo "sslscan $IP:80 " >> $loot/http/cmds_run &
+		echo "nikto -h $IP" >> $loot/http/cmds_run &
+		echo "gobuster dir -re -t 25 -u $IP -w /usr/share/wordlists/dirb/common.txt" >> $loot/http/cmds_run &
+		echo "curl $IP/robots.txt" >> $loot/http/cmds_run &
+		echo "whatweb -v -a 3 http://$IP" >> $loot/http/cmds_run &
+		echo "wafw00f http://$IP" >> $loot/http/cmds_run &
+`		wait
 
 		echo "[+] http enum complete!"
 		rm $IP/autoenum/loot/raw/http_found
@@ -371,12 +387,13 @@ smb_enum (){
 	done
 
 	touch $loot/smb/cmds_run
-	echo "nmap --script smb-vuln-ms17-010.nse --script-args=unsafe=1 -p 139,445 $IP " >> $loot/smb/cmds_run
-	echo "nmap --script smb-vuln-ms08-067.nse --script-args=unsafe=1 -p 445 $IP" >> $loot/smb/cmds_run
-	echo "nmap --script smb-vuln* -p 139,445 $IP" >> $loot/smb/cmds_run
-	echo "nmap --script smb-enum-shares -p 139,445 $IP" >> $loot/smb/cmds_run
-	echo "smbmap -H $IP -R " >> $loot/smb/cmds_run
-	echo "smbclient -N -L \\\\$IP " >> $loot/smb/cmds_run
+	echo "nmap --script smb-vuln-ms17-010.nse --script-args=unsafe=1 -p 139,445 $IP " >> $loot/smb/cmds_run &
+	echo "nmap --script smb-vuln-ms08-067.nse --script-args=unsafe=1 -p 445 $IP" >> $loot/smb/cmds_run &
+	echo "nmap --script smb-vuln* -p 139,445 $IP" >> $loot/smb/cmds_run &
+	echo "nmap --script smb-enum-shares -p 139,445 $IP" >> $loot/smb/cmds_run &
+	echo "smbmap -H $IP -R " >> $loot/smb/cmds_run &
+	echo "smbclient -N -L \\\\$IP " >> $loot/smb/cmds_run &
+	wait
 
 	rm $loot/smb/files
 	rm $loot/raw/smb_found
