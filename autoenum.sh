@@ -222,9 +222,9 @@ snmp_enum (){
 		rm $loot/snmp/snmpcheck
 		snmpwalk -c public -v2c $IP | tee -a $loot/snmp/uderstuff
 		echo "snmpwalk -c public -v2c $IP" >> $loot/snmp/cmds_run &
-		if grep -q "timeout" "$loot/snmp/uderstuff";then rm $loot/snmp/uderstuff;else cp $loot/snmp/uderstuff $loot/snmp/snmpenum;fi
+		if grep -q "timeout" "$loot/snmp/uderstuff";then rm $loot/snmp/uderstuff;else mv $loot/snmp/uderstuff $loot/snmp/snmpenum;fi
 	else
-		cp $loot/snmp/snmpcheck $loot/snmp/snmpenum
+		mv $loot/snmp/snmpcheck $loot/snmp/snmpenum
 	fi
 	echo "onesixtyone -c /usr/share/doc/onesixtyone/dict.txt $IP" >> $loot/snmp/cmds_run &
 	echo "snmp-check -c public $IP" >> $loot/snmp/cmds_run &
@@ -249,7 +249,6 @@ dns_enum (){
 	#dnsenum --enum $IP
 	#dnsrecon -d $IP
 	#gobuster -dns $IP
-	echo "USE FOR PENTESTS ONLY"
 }
 
 ftp_enum (){
@@ -353,7 +352,7 @@ http_enum (){
 		echo "curl $IP/robots.txt" >> $loot/http/cmds_run &
 		echo "whatweb -v -a 3 http://$IP" >> $loot/http/cmds_run &
 		echo "wafw00f http://$IP" >> $loot/http/cmds_run &
-`		wait
+		wait
 
 		echo "[+] http enum complete!"
 		rm $IP/autoenum/loot/raw/http_found
