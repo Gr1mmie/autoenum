@@ -249,6 +249,7 @@ dns_enum (){
 	#dnsenum --enum $IP
 	#dnsrecon -d $IP
 	#gobuster -dns $IP
+	echo " "
 }
 
 ftp_enum (){
