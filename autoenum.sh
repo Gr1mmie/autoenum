@@ -19,7 +19,7 @@ banner (){
 	echo " Author: Grimmie						   "
 	echo " Version: 1.4						   "
 	echo "									"
-	echo "##############################################################"
+#	echo "##############################################################"
         echo "                                                          "
 	sleep 1.5
 }
@@ -36,57 +36,63 @@ if [ ! -x "$(command -v nmap)" ];then
 fi
 
 if [ ! -x "$(command -v nikto)" ];then
-	echo "[+] nikto not found. Installing..."
+	echo "[+] nikto not detected. Installing..."
 	sudo apt-get install nikto -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v gobuster)" ];then
-	echo "[+] gobuster not found. Installing..."
+	echo "[+] gobuster not detected. Installing..."
 	sudo apt-get install gobuster -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v whatweb)" ];then
-       echo "[+] whatweb not found. installing..."
+       echo "[+] whatweb not detected. installing..."
 	sudo apt-get install whatweb -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v onesixtyone)" ];then
-        echo "[+] onesixtyone not found. Installing..."
+        echo "[+] onesixtyone not detected. Installing..."
         sudo apt-get install onesixtyone -y > installing;rm installing
 fi
 
+if [ ! -x "$(command -v rpcbind)" ];then
+	echo "rpcbind not detected. Installing..."
+	sudo apt-get install rpcbind -y > installing;rm installing
+
+fi
+
 if [ ! -x "$(command -v snmp-check)" ];then
-        echo "[+] snmp-check not found. Installing..."
+        echo "[+] snmp-check not detected. Installing..."
         sudo apt-get install snmp-check -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v snmpwalk)" ];then
-        echo "[+] snmpwalk not found. Installing..."
+        echo "[+] snmpwalk not detected. Installing..."
         sudo apt-get install snmpwalk -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v fierce)" ];then
-        echo "[+] fierce not found. Installing..."
+        echo "[+] fierce not detected. Installing..."
         sudo apt-get install fierce -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v dnsrecon)" ];then
-        echo "[+] dnsrecon not found. Installing..."
+        echo "[+] dnsrecon not detected. Installing..."
         sudo apt-get installl dnsrecon -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v dnsenum)" ];then
-        echo "[+] dnsenum not found. Installing..."
+        echo "[+] dnsenum not detected. Installing..."
         sudo apt-get install dnsenum -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v oscanner)" ];then
-        echo "[+] oscanner not found. Installing..."
+        echo "[+] oscanner not detected. Installing..."
         sudo apt-get install oscanner -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v wafw00f)" ];then
-        echo "[+] wafw00f not found. Installing..."
+        echo "[+] wafw00f not detected. Installing..."
 	sudo apt-get install wafw00f -y > installing;rm installing
 fi
 
@@ -109,6 +115,7 @@ upgrade (){
 	apt-get install fierce >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install fierce -y >> installing; rm installed installing;fi &
 	apt-get install onesixtyone >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install onesixtyone -y >> installing; rm installed installing;fi &
 	apt-get install whatweb >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install whatweb -y >> installing; rm installed installing;fi &
+	apt-get install rpcbind >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install rpcbind -y >> installing; rm installed installing;fi &
 	wait
 }
 
@@ -156,20 +163,27 @@ reg (){
         cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "ftp" > $loot/raw/ftp_found
         cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "ldap" > $loot/raw/ldap_found
         cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "smtp" > $loot/raw/smtp_found
+	cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "imap" > $loot/raw/imap_found
+	cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "pop3" > $loot/raw/pop3_found
         cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "oracle" > $loot/raw/oracle_found
+        cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "rpc" > $loot/raw/rpc_found
 
-        if [[ -s "$loot/raw/smb_found" ]];then smb_enum;fi
-        if [[ -s "$loot/raw/http_found" ]] || [ -s "$loot/raw/ports" ];then http_enum;fi
         if [[ -s "$loot/raw/snmp_found" ]];then snmp_enum;fi
+        if [[ -s "$loot/raw/rpc_found" ]];then rpc_enum;fi
+        if [[ -s "$loot/raw/pop3_found" ]];then pop3_enum;fi
+        if [[ -s "$loot/raw/imap_found" ]];then imap_enum;fi
 #       if [[ -s "$loot/raw/dns_found" ]];then dns_enum;fi
         if [[ -s "$loot/raw/ftp_found" ]];then ftp_enum;fi
         if [[ -s "$loot/raw/ldap_found" ]];then ldap_enum;fi
         if [[ -s "$loot/raw/smtp_found" ]];then smtp_enum;fi
         if [[ -s "$loot/raw/oracle_found" ]];then oracle_enum;fi
+	if [[ -s "$loot/raw/pop3_found" ]];then pop3_enum;fi
+	if [[ -s "$loot/raw/imap_found" ]];then imap_enum;fi
+        if [[ -s "$loot/raw/smb_found" ]];then smb_enum;fi
+        if [[ -s "$loot/raw/http_found" ]] || [ -s "$loot/raw/ports" ];then http_enum;fi
 
-        if [[ -s "$loot/raw/windows_found" ]];then windows_enum;fi
-        if [[ -s "$loot/raw/linux_found" ]];then linux_enum;fi
-
+#        if [[ -s "$loot/raw/windows_found" ]];then windows_enum;fi
+#        if [[ -s "$loot/raw/linux_found" ]];then linux_enum;fi
 
 }
 
@@ -200,18 +214,25 @@ aggr (){
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "ldap" > $loot/raw/ldap_found
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "smtp" > $loot/raw/smtp_found
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "oracle" > $loot/raw/oracle_found
+	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "pop3" > $loot/raw/pop3_found
+	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "imap" > $loot/raw/imap_found
+	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "rpc" > $loot/raw/rpc_found
 
-	if [[ -s "$loot/raw/smb_found" ]];then smb_enum;fi
-	if [[ -s "$loot/raw/http_found" ]] || [ -s "$loot/raw/ports" ];then http_enum;fi
 	if [[ -s "$loot/raw/snmp_found" ]];then snmp_enum;fi
+	if [[ -s "$loot/raw/rpc_found" ]];then rpc_enum;fi
+	if [[ -s "$loot/raw/pop3_found" ]];then pop3_enum;fi
+	if [[ -s "$loot/raw/imap_found" ]];then imap_enum;fi
 #	if [[ -s "$loot/raw/dns_found" ]];then dns_enum;fi
 	if [[ -s "$loot/raw/ftp_found" ]];then ftp_enum;fi
 	if [[ -s "$loot/raw/ldap_found" ]];then ldap_enum;fi
 	if [[ -s "$loot/raw/smtp_found" ]];then smtp_enum;fi
 	if [[ -s "$loot/raw/oracle_found" ]];then oracle_enum;fi
+	if [[ -s "$loot/raw/smb_found" ]];then smb_enum;fi
+	if [[ -s "$loot/raw/http_found" ]] || [[ -s "$loot/raw/ports" ]];then http_enum;fi
 
-	if [[ -s "$loot/raw/windows_found" ]];then windows_enum;fi
-	if [[ -s "$loot/raw/linux_found" ]];then linux_enum;fi
+#	if [[ -s "$loot/raw/windows_found" ]];then windows_enum;fi
+#	if [[ -s "$loot/raw/linux_found" ]];then linux_enum;fi
+
 }
 
 snmp_enum (){
@@ -233,6 +254,23 @@ snmp_enum (){
 	rm $IP/autoenum/loot/raw/snmp_found
 }
 
+rpc_enum (){
+	mkdir $loot/rpc
+	rpcbind -p $IP | tee -a $loot/rpc/versions
+	rm $loot/raw/rpc_found
+}
+
+pop3_enum (){
+	mkdir $loot/pop3
+	nmap -sV --script pop3-brute $IP | tee -a $loot/pop3/brute
+	echo "telnet $IP 110" >> $loot/pop3/manual_cmds
+	rm $loot/raw/pop3_found
+}
+
+imap_enum (){
+	echo "[+] Work in progress"
+}
+
 ldap_enum (){
 	mkdir $loot/ldap
 	nmap -vv -Pn -sV -p 389 --script='(ldap* or ssl*) and not (brute or broadcast or dos or external or fuzzer)' $IP | tee -a $loot/ldap/ldap_scripts
@@ -240,7 +278,7 @@ ldap_enum (){
 	echo "nmap -vv -Pn -sV -p 389 --script='(ldap* or ssl*) and not (brute or broadcast or dos or external or fuzzer)' $IP" >> $loot/ldap/cmds_run &
 	wait
 
-	rm $IP/autoenum/loot/raw/ldap_found
+	rm $loot/raw/ldap_found
 }
 
 dns_enum (){
@@ -259,13 +297,11 @@ ftp_enum (){
 	for port in $(cat $loot/ftp/port_list);do
 		nmap -sV -Pn -p $port --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,ftp-syst -v $IP | tee -a $loot/ftp/ftp_scripts
 	done
-	touch $loot/ftp/cmds_run
 	echo "nmap -sV -Pn -p $port --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,ftp-syst -v $IP " >> $loot/ftp/cmds_run &
 	wait
 
 	rm $loot/ftp/port_list
 	rm $loot/raw/ftp_found
-	rm $IP/autoenum/loot/raw/ftp_found
 	echo "[+] FTP enum complete"
 }
 
@@ -276,11 +312,13 @@ smtp_enum (){
 		smtp-user-enum -M VRFY -U /usr/share/metasploit-framework/data/wordlists/unix_users.txt -t $IP -p $port | tee -a $loot/smtp/users
 	done
 	if grep -q "0 results" "$loot/smtp/users";then rm $loot/smtp/users;fi
-	echo "smtp-user-enum -M VRFY -U /usr/share/metasploit-framework/data/wordlists/unix_users.txt -t $IP -p $port" >> $loot/smtp/cmds_run &
+	echo "nc -nvv $IP $port" >> $loot/smtp/maunal_cmds
+	echo "telnet $IP $port" >> $loot/smpt/manual_cmds
+ 	echo "smtp-user-enum -M VRFY -U /usr/share/metasploit-framework/data/wordlists/unix_users.txt -t $IP -p $port" >> $loot/smtp/cmds_run &
 	wait
 
 	rm $loot/smtp/port_list
-	rm $IP/autoenum/loot/raw/smtp_found
+	rm $loot/raw/smtp_found
 }
 
 oracle_enum (){
@@ -294,7 +332,7 @@ oracle_enum (){
         ./odat.py tnscmd -s $rhost -p 1521 --version | tee -a $loot/oracle/odat_enum
         ./odat.py tnscmd -s $rhost -p 1521 --status | tee -a $loot/oracle/odat_enum
         ./odat.py sidguesser -s $rhost -p 1521 | tee -a $loot/oracle/odat_enum
-	rm $IP/autoenum/loot/raw/oracle_found
+	rm $loot/raw/oracle_found
 }
 
 http_enum (){
