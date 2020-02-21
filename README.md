@@ -57,6 +57,7 @@ Your OS may or may not have some installed by default. Not to worry, autoenum re
 * wafw00f
 * odat
 * searchsploit
+* rpcbind
 
 ## To run autoenum from anywhere
 ```
