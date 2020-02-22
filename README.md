@@ -31,6 +31,9 @@ Autoenum first runs 2 nmap scans in tandem, one scan looks specifically for serv
 * Added file containing all commands run in case a command failed
 * installs tools not detected and checks if all are up-to-date
 
+### Version 1.4.1
+* fixed searchsploit encoding issue where parts were being displayed as encoded when read from a text editor
+
 ### Version 1.5 (Work in Progress)
 * imap,pop3,rpc enum
 * AD enumeration (suite)
