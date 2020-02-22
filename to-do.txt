@@ -9,3 +9,4 @@ add support for hostnames and check if an IP is being passed, if not refer to he
 add usage modules. (kinda like gobuster....maybe)
 validate IP 
 flag for exploitation, exploitation tools
+priv esc
