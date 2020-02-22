@@ -35,6 +35,7 @@ Autoenum first runs 2 nmap scans in tandem, one scan looks specifically for serv
 * imap,pop3,rpc enum
 * AD enumeration (suite)
 * implement grepkrawler into http enumeration
+* interactive menu
 
 ## Dependencies
 Your OS may or may not have some installed by default. Not to worry, autoenum recognizes tools not installed and installs them for you, even updating if they aren't up-to-date!
