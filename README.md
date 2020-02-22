@@ -34,7 +34,6 @@ Autoenum first runs 2 nmap scans in tandem, one scan looks specifically for serv
 ### Version 1.5 (Work in Progress)
 * imap,pop3,rpc enum
 * AD enumeration (suite)
-* implement grepkrawler into http enumeration
 * interactive menu
 
 ## Dependencies
