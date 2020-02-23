@@ -66,5 +66,8 @@ Your OS may or may not have some installed by default. Not to worry, autoenum re
 cp ~/autoenum/autoenum.sh /usr/bin/
 chmod o+x /usr/bin/autoenum.sh
 
-autoenum.sh -h 
+autoenum.sh
 ```
+
+## Contributors
+Dievus
