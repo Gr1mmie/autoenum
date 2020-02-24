@@ -45,7 +45,7 @@ autoenum.sh
 ### Version 1.5 (Work in Progress)
 * imap,pop3,rpc enum
 * AD enumeration (suite)
-* interactive menu
+* interactive menu!
 
 ## Dependencies
 Your OS may or may not have some installed by default. Not to worry, autoenum recognizes tools not installed and installs them for you, even updating if they aren't up-to-date!
