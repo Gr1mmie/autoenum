@@ -17,7 +17,7 @@ Autoenum first runs 2 nmap scans in tandem, one scan looks specifically for serv
 cp ~/autoenum/autoenum.sh /usr/bin/
 chmod o+x /usr/bin/autoenum.sh
 
-autoenum.sh
+autoenum.sh -h
 ```
 
 ## What's new
