@@ -146,7 +146,7 @@ reg (){
         if [[ ! -d "$IP/autoenum/reg_scan/ports_and_services" ]];then  mkdir -p $IP/autoenum/reg_scan/ports_and_services; fi
 
         nmap -sV $IP -oX $IP/autoenum/reg_scan/raw/xml_out & $nmap_aggr | tee $IP/autoenum/reg_scan/raw/full_scan;searchsploit -v --nmap $IP/autoenum/reg_scan/raw/xml_out | tee -a  $loot/exploits/searchsploit_nmap
-	cat $loot/exploits/searchsploit_nmap | jq >> $loot/exploit/searchsploit_nmap.json &
+	cat $loot/exploits/searchsploit_nmap | jq >> $loot/exploits/searchsploit_nmap.json &
 	rm $loot/exploits/searchsploit_nmap &
 	wait
         cat $IP/autoenum/reg_scan/raw/full_scan | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' | sed '/|/,+1 d' >> $IP/autoenum/reg_scan/ports_and_services/services_running
@@ -199,7 +199,7 @@ aggr (){
 	if [[ ! -d "$IP/autoenum/aggr_scan/ports_and_services" ]];then  mkdir -p $IP/autoenum/aggr_scan/ports_and_services; fi
 
 	nmap -sV $IP -oX $IP/autoenum/aggr_scan/raw/xml_out & $nmap_aggr | tee $IP/autoenum/aggr_scan/raw/full_scan;searchsploit -v --nmap $IP/autoenum/aggr_scan/raw/xml_out | tee -a $loot/exploits/searchsploit_nmap
-	cat $loot/exploits/searchsploit_nmap | jq >> $loot/exploit/searchsploit_nmap.json &
+	cat $loot/exploits/searchsploit_nmap | jq >> $loot/exploits/searchsploit_nmap.json &
         rm $loot/exploits/searchsploit_nmap &
         wait
 	cat $IP/autoenum/aggr_scan/raw/full_scan | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' | sed '/|/,+1 d' >> $IP/autoenum/aggr_scan/ports_and_services/services_running
