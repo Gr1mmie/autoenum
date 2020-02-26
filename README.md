@@ -72,6 +72,7 @@ Your OS may or may not have some installed by default. Not to worry, autoenum re
 * searchsploit
 * rpcbind
 * tput
+* jq
 
 ## Contributors
 Dievus
