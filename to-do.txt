@@ -8,3 +8,4 @@ add support for hostnames
 add usage modules. (kinda like gobuster....maybe)
 flag for exploitation, exploitation tools
 priv esc
+make shell feature persistant
