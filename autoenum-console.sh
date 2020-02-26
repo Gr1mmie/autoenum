@@ -121,7 +121,7 @@ aggr (){
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "pop3" > $loot/raw/pop3_found
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "imap" > $loot/raw/imap_found
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "rpc" > $loot/raw/rpc_found
-
+ 
 	if [[ -s "$loot/raw/snmp_found" ]];then snmp_enum;fi
 	if [[ -s "$loot/raw/rpc_found" ]];then rpc_enum;fi
 	if [[ -s "$loot/raw/pop3_found" ]];then pop3_enum;fi
