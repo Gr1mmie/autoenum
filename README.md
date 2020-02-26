@@ -43,7 +43,7 @@ autoenum.sh
 * fixed searchsploit encoding issue where parts were being displayed as encoded when read from a text editor
 
 ### Version 2.0
-* interactive menu!
+* Autoenum now runs as a console tool similar to msfconsole. 
 
 ### Version 2.1 (Work in Progress)
 * AD enumeration (suite)
