@@ -1,105 +1,20 @@
 #!/bin/bash
 
-halp_meh (){
-	echo "[*] Usage: ./autoenum [profile] <IP>"
-	echo "[*] Example: ./autoenum -a 127.0.0.1"
-	echo "[*] Profiles:"
-	echo "		[>] -a runs aggresive scan. scans all ports aggresively"
-	echo "		[>] -r runs regular scan. scans all ports normally, no scripts and checks only for OS"
-}
-
 banner (){
-#	echo "									"
-        echo '                   --                                       '
-        echo '    ____ _ __  __ / /_ ____   ___   ____   __  __ ____ ___  '
-        echo '   / __ `// / / // __// __ \ / _ \ / __ \ / / / // __ `__ \ '
-        echo '  / /_/ // /_/ // /_ / /_/ //  __// / / // /_/ // / / / / / '
-        echo '  \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/  '
-	echo "							           "
-	echo " Author: Grimmie						   "
-	echo " Version: 1.4						   "
-	echo "									"
-#	echo "##############################################################"
-        echo "                                                          "
-	sleep 1.5
+tput setaf 6
+#       echo "                                                             "
+        echo '                   --                                        '
+        echo '    ____ _ __  __ / /_ ____   ___   ____   __  __ ____ ___   '
+        echo '   / __ `// / / // __// __ \ / _ \ / __ \ / / / // __ `__ \  '
+        echo '  / /_/ // /_/ // /_ / /_/ //  __// / / // /_/ // / / / / /  '
+        echo '  \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/   '
+        echo "                                                             "
+tput bold; echo "Author: Grimmie                                           "
+tput bold; echo "Version: 1.4.1                                            "
+#        echo "                                                             "
+        tput sgr0
+        sleep 1.025
 }
-
-
-IP=$2
-
-# install if not installed, update if not up-to-date (only if root)
-# check if root, if so, install
-
-if [ ! -x "$(command -v nmap)" ];then
-	echo "[+] nmap not detected...Installing"
-	sudo apt-get install nmap -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v nikto)" ];then
-	echo "[+] nikto not detected. Installing..."
-	sudo apt-get install nikto -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v gobuster)" ];then
-	echo "[+] gobuster not detected. Installing..."
-	sudo apt-get install gobuster -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v whatweb)" ];then
-       echo "[+] whatweb not detected. installing..."
-	sudo apt-get install whatweb -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v onesixtyone)" ];then
-        echo "[+] onesixtyone not detected. Installing..."
-        sudo apt-get install onesixtyone -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v rpcbind)" ];then
-	echo "rpcbind not detected. Installing..."
-	sudo apt-get install rpcbind -y > installing;rm installing
-
-fi
-
-if [ ! -x "$(command -v snmp-check)" ];then
-        echo "[+] snmp-check not detected. Installing..."
-        sudo apt-get install snmp-check -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v snmpwalk)" ];then
-        echo "[+] snmpwalk not detected. Installing..."
-        sudo apt-get install snmpwalk -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v fierce)" ];then
-        echo "[+] fierce not detected. Installing..."
-        sudo apt-get install fierce -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v dnsrecon)" ];then
-        echo "[+] dnsrecon not detected. Installing..."
-        sudo apt-get installl dnsrecon -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v dnsenum)" ];then
-        echo "[+] dnsenum not detected. Installing..."
-        sudo apt-get install dnsenum -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v oscanner)" ];then
-        echo "[+] oscanner not detected. Installing..."
-        sudo apt-get install oscanner -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v wafw00f)" ];then
-        echo "[+] wafw00f not detected. Installing..."
-	sudo apt-get install wafw00f -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v odat)" ];then
-        echo "[+] odat not detected. installing..."
-	sudo apt-get install odat -y > installing;rm installing
-fi
 
 upgrade (){
 	echo "[*] Checking if anything requires updates, this may take a few minutes...."
@@ -117,25 +32,8 @@ upgrade (){
 	apt-get install whatweb >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install whatweb -y >> installing; rm installed installing;fi &
 	apt-get install rpcbind >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install rpcbind -y >> installing; rm installed installing;fi &
 	wait
+	rm installed
 }
-
-
-if [[ "$IP" == " " ]];then
-	echo "[-] No IP supplied..."
-	echo "[*] ./autoenum -h for more info"
-	exit 1
-fi
-
-if [[ ! "$1" == " " ]]; then
-	if [[ ! -d "$IP/autoenum" ]];then mkdir -p $IP/autoenum;fi
-	if [[ ! -d "$IP/autoenum/loot/raw" ]];then
-		mkdir -p $IP/autoenum/loot/raw
-		loot="$IP/autoenum/loot"
-	fi
-	if [[ ! -d "$IP/autoenum/loot/exploits" ]];then mkdir -p $IP/autoenum/loot/exploits;fi
-else
-	halp_meh
-fi
 
 reg (){
 	banner
@@ -461,30 +359,239 @@ cleanup (){
 	rm installed
 }
 
-while getopts "hba:r:" opt;do
-	case ${opt} in
-		a )
-		  aggr
-		  cleanup
-		  reset
-		  exit 1
-		  ;;
-		r )
-		  reg
-		  cleanup
-		  reset
-		  exit 1
-	          ;;
-		h )
-		  halp_meh
-		  exit 1
-		  ;;
-		b )
-		  banner
-		  exit 1
-		  ;;
+get_ip (){
+echo -e
+echo "Enter a target IP"
+tput bold; echo -en "Autoenum > ";tput sgr0
+read unchecked_IP
+if [[ $unchecked_IP =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
+then
+        IP="$unchecked_IP";
 
-	esac
+        sleep 1
+        tput setaf 4;echo -e "[+] IP set to $IP";tput sgr0
+        echo -e
+else
+        tput setaf 1
+        echo "[-] Invalid IP detected."
+        echo "[-] Example: 192.168.1.5"
+        tput sgr0
+        get_ip
+fi
+}
+
+# add some general file/dir manipulation commands i.e cat, cd, ls, etc.
+halp_meh (){
+        echo "Scan Profiles:"
+        echo -e "[*] aggr"
+        echo -e "[*] reg"
+        echo -e
+        echo "General Commands:"
+        echo -e "[*] ping"
+        echo -e "[*] help"
+        echo -e "[*] banner"
+        echo -e "[*] clear"
+	echo -e "[*] reset"
+	echo -e "[*] commands"
+	echo -e "[*] shell"
+        echo -e "[*] upgrade"
+        echo -e "[*] set_ip"
+        echo -e "[*] exit"
+        echo -e
+        sleep 1
+}
+
+halp_meh_pws (){
+        echo "General Commands:"
+	echo "[*] ping - Verify host is up/accepting ping probes"
+        echo "[*] help - displays this page"
+        echo "[*] banner - display banner"
+        echo "[*] clear - clears screen"
+       	echo "[*] reset - run this if text is unviewable after a scan"
+	echo "[*] commands - shows all avaliable commands"
+	echo "[*] shell - allows you to run commands as if in a terminal"
+        echo "[*] upgrade - checks to see if any dependencies require an update"
+        echo "[*] set_ip - prompt"
+        echo -e
+        echo "Scan Profiles:"
+        echo "[*] aggr - runs aggressive scan. scans all ports aggressively"
+        echo "[*] reg - runs regular scan. scans all ports normally, no scripts and checks only for OS"
+        echo -e
+}
+
+menu (){
+tput bold;echo -en "Autoenum($IP) > ";tput sgr0
+read arg
+
+while true && [[ ! "$IP" == " " ]];do
+                # add some color
+                # add more banners (?)...grimmie want more banners :(
+	mkbasedirs (){
+	echo "[+] Checking for base dirs..."
+	if [[ ! -d "$IP/autoenum" ]];then mkdir -p $IP/autoenum;fi
+	if [[ ! -d "$IP/autoenum/loot/raw" ]];then mkdir -p $IP/autoenum/loot/raw; loot="$IP/autoenum/loot";else loot="$IP/autoenum/loot";fi
+	if [[ ! -d "$loot/exploits" ]];then mkdir -p $loot/exploits;fi
+	echo "[+] Done!"
+	}
+        case $arg in
+		"commands")
+			halp_meh
+			menu
+			break
+			;;
+		"shell")
+			echo -en "[+] Command > ";read cmd #add some color or somthing
+			$cmd
+			menu
+			break
+			;;
+		"reset")
+			reset
+			menu
+			break
+			;;
+		"upgrade")
+			upgrade
+			menu
+			break
+			;;
+                "clear")
+                        clear
+                        menu
+                        break
+                        ;;
+                "banner")
+                        banner
+                        menu
+                        break
+                        ;;
+                "ping")
+                        ping $IP -c 1;echo -e
+                        menu
+                        break
+                        ;;
+                "aggr")
+                        echo "[+] You've selected the aggressive scan profile!";echo -e
+			mkbasedirs
+			aggr
+			cleanup
+                        menu
+                        break
+                        ;;
+                "reg")
+                        echo "[+] You've selected the regular scan profile!";echo -e
+			mkbasedirs
+			reg
+			cleanup
+			menu
+                        break
+                        ;;
+                "help")
+                        halp_meh_pws
+                        menu
+                        break
+                        ;;
+                "set_ip")
+                        echo -en "new IP > ";read unchecked_IP
+                        if [[ $unchecked_IP =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]];then
+                                IP="$unchecked_IP"
+                        else
+                                echo "[-] Invalid IP detected."
+                                echo "[-] Example: 192.168.1.5"
+                                exit 1 #replace with loopback to Autoenum > eventually
+                        fi
+                        echo "[-] IP changed to $IP"
+                        menu
+                        break
+                        ;;
+                "exit")
+                        tput setaf 1;echo "[-] Terminating session..."
+                        tput sgr0
+                        sleep 1.5
+                        break
+                        ;;
+                *)
+                        tput setaf 8;echo "[-] Invalid input detected"
+                        tput sgr0
+                        menu
+                        break
+                        ;;
+        esac
 done
+}
 
-shift $((OPTIND -1))
+if [ ! -x "$(command -v nmap)" ];then
+	echo "[+] nmap not detected...Installing"
+	sudo apt-get install nmap -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v nikto)" ];then
+	echo "[+] nikto not detected. Installing..."
+	sudo apt-get install nikto -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v gobuster)" ];then
+	echo "[+] gobuster not detected. Installing..."
+	sudo apt-get install gobuster -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v whatweb)" ];then
+       echo "[+] whatweb not detected. installing..."
+	sudo apt-get install whatweb -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v onesixtyone)" ];then
+        echo "[+] onesixtyone not detected. Installing..."
+        sudo apt-get install onesixtyone -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v rpcbind)" ];then
+	echo "rpcbind not detected. Installing..."
+	sudo apt-get install rpcbind -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v snmp-check)" ];then
+        echo "[+] snmp-check not detected. Installing..."
+        sudo apt-get install snmp-check -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v snmpwalk)" ];then
+        echo "[+] snmpwalk not detected. Installing..."
+        sudo apt-get install snmpwalk -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v fierce)" ];then
+        echo "[+] fierce not detected. Installing..."
+        sudo apt-get install fierce -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v dnsrecon)" ];then
+        echo "[+] dnsrecon not detected. Installing..."
+        sudo apt-get installl dnsrecon -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v dnsenum)" ];then
+        echo "[+] dnsenum not detected. Installing..."
+        sudo apt-get install dnsenum -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v oscanner)" ];then
+        echo "[+] oscanner not detected. Installing..."
+        sudo apt-get install oscanner -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v wafw00f)" ];then
+        echo "[+] wafw00f not detected. Installing..."
+	sudo apt-get install wafw00f -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v odat)" ];then
+        echo "[+] odat not detected. installing..."
+	sudo apt-get install odat -y > installing;rm installing
+fi
+
+clear
+banner
+get_ip
+halp_meh
+menu
