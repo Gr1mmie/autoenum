@@ -12,15 +12,15 @@ Autoenum is a recon tool which performs automatic enumeration of services discov
 ## How it Works
 Autoenum first runs 2 nmap scans in tandem, one scan looks specifically for service versions to run against searchsploit and the other is a scan dependent on the argument. Every scan profile checks for services running, the type of scan is the only difference. After the scans are finished, the services/ports open and operating systems along with script output (if avaliable) is extracted and further analyzed. If a certain service is found, Autoenum will begin enumerating by firing off a number of tools and create a dir for that service (i.e detecting http starts up nikto, wafw00f, gobuster, and others). If a dependency required is not detected, that dependency will be auto installed and checked if there is a new update everytime the tool is run. Autoenum outputs this information in 2 main sections(scan type and loot dirs) with sub directories branching off depending on what is found.
 
-## Why Two You Ask?
-I wasn't sure which version would be favored so I added both. autoenum-console opens the tool as a ...well a console.
+## Autoenum-console...What's that?
+Autoenum-console is the interactive version of autoenum, still in expirimental phase.
 
 ## Run Autoenum from Anywhere
 ```
 cp ~/autoenum/autoenum.sh /usr/bin/autoenum.sh
 chmod o+x /usr/bin/autoenum.sh
 
-autoenum.sh -h
+autoenum.sh
 ```
 
 ## What's new
