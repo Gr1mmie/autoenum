@@ -42,10 +42,13 @@ autoenum.sh
 ### Version 1.4.1
 * fixed searchsploit encoding issue where parts were being displayed as encoded when read from a text editor
 
-### Version 2.0 (Work in Progress)
-* imap,pop3,rpc enum
-* AD enumeration (suite)
+### Version 2.0
 * interactive menu!
+
+### Version 2.1 (Work in Progress)
+* AD enumeration (suite)
+* imap, mysql enumeration
+* persistent shell command
 
 ## Dependencies
 Your OS may or may not have some installed by default. Not to worry, autoenum recognizes tools not installed and installs them for you, even updating if they aren't up-to-date!
