@@ -14,10 +14,10 @@ Autoenum first runs 2 nmap scans in tandem, one scan looks specifically for serv
 
 ## Run Autoenum from Anywhere
 ```
-cp ~/autoenum/autoenum.sh /usr/bin/autoenum.sh
-chmod o+x /usr/bin/autoenum.sh
+cp ~/autoenum/autoenum.sh /usr/bin/autoenum
+chmod o+x /usr/bin/autoenum
 
-autoenum.sh
+autoenum
 ```
 
 ## What's new
