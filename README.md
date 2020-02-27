@@ -15,7 +15,6 @@ Autoenum first runs 2 nmap scans in tandem, one scan looks specifically for serv
 ## Installation
 ```
 git clone https://github.com/thatonetester/autoenum.git
-
 ```
 ### Running Autoenum From Anywhere
 ```
