@@ -51,7 +51,7 @@ autoenum
 
 ### Version 2.1 (Work in Progress)
 * AD enumeration (suite)
-* imap, mysql enumeration
+* imap, mysql,redis enumeration
 * persistent shell command
 
 ## Dependencies
