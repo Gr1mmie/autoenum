@@ -1,4 +1,5 @@
 create more scan profiles (see https://github.com/perfectra1n/AutoBountyRecon/blob/master/config/port-scan-profiles.toml for ideas)
+add nmap xmas 
 add OS enum: windows, FreeBSD, Linux, solaris
 add enum for pop3, imap, kerberos, ldap, rpc, rtmp, cups, mysql, sip(?) AD enum(?)
 add eyewitness to scan all ports on http and directories (maybe)/add screenshot of webpage and dirs if http is detected
