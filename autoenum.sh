@@ -1,105 +1,20 @@
 #!/bin/bash
 
-halp_meh (){
-	echo "[*] Usage: ./autoenum [profile] <IP>"
-	echo "[*] Example: ./autoenum -a 127.0.0.1"
-	echo "[*] Profiles:"
-	echo "		[>] -a runs aggresive scan. scans all ports aggresively"
-	echo "		[>] -r runs regular scan. scans all ports normally, no scripts and checks only for OS"
-}
-
 banner (){
-#	echo "									"
-        echo '                   --                                       '
-        echo '    ____ _ __  __ / /_ ____   ___   ____   __  __ ____ ___  '
-        echo '   / __ `// / / // __// __ \ / _ \ / __ \ / / / // __ `__ \ '
-        echo '  / /_/ // /_/ // /_ / /_/ //  __// / / // /_/ // / / / / / '
-        echo '  \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/  '
-	echo "							           "
-	echo " Author: Grimmie						   "
-	echo " Version: 1.4						   "
-	echo "									"
-#	echo "##############################################################"
-        echo "                                                          "
-	sleep 1.5
+tput setaf 6
+#       echo "                                                             "
+        echo '                   --                                        '
+        echo '    ____ _ __  __ / /_ ____   ___   ____   __  __ ____ ___   '
+        echo '   / __ `// / / // __// __ \ / _ \ / __ \ / / / // __ `__ \  '
+        echo '  / /_/ // /_/ // /_ / /_/ //  __// / / // /_/ // / / / / /  '
+        echo '  \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/   '
+        echo "                                                             "
+tput bold; echo "Author: Grimmie                                           "
+tput bold; echo "Version: 2.0                                              "
+#        echo "                                                             "
+        tput sgr0
+        sleep 1.025
 }
-
-
-IP=$2
-
-# install if not installed, update if not up-to-date (only if root)
-# check if root, if so, install
-
-if [ ! -x "$(command -v nmap)" ];then
-	echo "[+] nmap not detected...Installing"
-	sudo apt-get install nmap -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v nikto)" ];then
-	echo "[+] nikto not detected. Installing..."
-	sudo apt-get install nikto -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v gobuster)" ];then
-	echo "[+] gobuster not detected. Installing..."
-	sudo apt-get install gobuster -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v whatweb)" ];then
-       echo "[+] whatweb not detected. installing..."
-	sudo apt-get install whatweb -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v onesixtyone)" ];then
-        echo "[+] onesixtyone not detected. Installing..."
-        sudo apt-get install onesixtyone -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v rpcbind)" ];then
-	echo "rpcbind not detected. Installing..."
-	sudo apt-get install rpcbind -y > installing;rm installing
-
-fi
-
-if [ ! -x "$(command -v snmp-check)" ];then
-        echo "[+] snmp-check not detected. Installing..."
-        sudo apt-get install snmp-check -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v snmpwalk)" ];then
-        echo "[+] snmpwalk not detected. Installing..."
-        sudo apt-get install snmpwalk -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v fierce)" ];then
-        echo "[+] fierce not detected. Installing..."
-        sudo apt-get install fierce -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v dnsrecon)" ];then
-        echo "[+] dnsrecon not detected. Installing..."
-        sudo apt-get installl dnsrecon -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v dnsenum)" ];then
-        echo "[+] dnsenum not detected. Installing..."
-        sudo apt-get install dnsenum -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v oscanner)" ];then
-        echo "[+] oscanner not detected. Installing..."
-        sudo apt-get install oscanner -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v wafw00f)" ];then
-        echo "[+] wafw00f not detected. Installing..."
-	sudo apt-get install wafw00f -y > installing;rm installing
-fi
-
-if [ ! -x "$(command -v odat)" ];then
-        echo "[+] odat not detected. installing..."
-	sudo apt-get install odat -y > installing;rm installing
-fi
 
 upgrade (){
 	echo "[*] Checking if anything requires updates, this may take a few minutes...."
@@ -117,44 +32,24 @@ upgrade (){
 	apt-get install whatweb >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install whatweb -y >> installing; rm installed installing;fi &
 	apt-get install rpcbind >> installed;if ! grep -q "already the newest version" "installed";then sudo apt-get install rpcbind -y >> installing; rm installed installing;fi &
 	wait
+	rm installed
 }
-
-
-if [[ "$IP" == " " ]];then
-	echo "[-] No IP supplied..."
-	echo "[*] ./autoenum -h for more info"
-	exit 1
-fi
-
-if [[ ! "$1" == " " ]]; then
-	if [[ ! -d "$IP/autoenum" ]];then mkdir -p $IP/autoenum;fi
-	if [[ ! -d "$IP/autoenum/loot/raw" ]];then
-		mkdir -p $IP/autoenum/loot/raw
-		loot="$IP/autoenum/loot"
-	fi
-	if [[ ! -d "$IP/autoenum/loot/exploits" ]];then mkdir -p $IP/autoenum/loot/exploits;fi
-else
-	halp_meh
-fi
 
 reg (){
 	banner
 	upgrade
 	nmap_reg="nmap -p- -O -T4 -Pn -v $IP"
-
 	if [[ ! -d "$IP/autoenum/reg_scan/raw" ]];then mkdir -p $IP/autoenum/reg_scan/raw; fi
         if [[ ! -d "$IP/autoenum/reg_scan/ports_and_services" ]];then  mkdir -p $IP/autoenum/reg_scan/ports_and_services; fi
-
         nmap -sV $IP -oX $IP/autoenum/reg_scan/raw/xml_out & $nmap_aggr | tee $IP/autoenum/reg_scan/raw/full_scan;searchsploit -j --nmap $IP/autoenum/reg_scan/raw/xml_out | tee -a  $loot/exploits/searchsploit_nmap
+	searchsploit --nmap $IP/autoenum/reg_scan/raw/xml_out
 	cat $loot/exploits/searchsploit_nmap | jq >> $loot/exploits/searchsploit_nmap.json
 	rm $loot/exploits/searchsploit_nmap
 
         cat $IP/autoenum/reg_scan/raw/full_scan | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' | sed '/|/,+1 d' >> $IP/autoenum/reg_scan/ports_and_services/services_running
         cat $IP/autoenum/reg_scan/raw/full_scan | grep 'OS' | sed '1d' | sed '$d' | cut -d '|' -f 1 | sed '/^$/d' >> $IP/autoenum/reg_scan/ports_and_services/OS_detection
 #        cat $IP/autoenum/reg_scan/raw/full_scan | grep "script results" > $IP/autoenum/reg_scan/ports_and_services/script_output;cat $IP/autoenum/reg_scan/raw/full_scan | grep "|" | sed '$d' >>  $IP/autoenum/reg_scan/ports_and_services/script_output
-
 #       cat $IP/autoenum/reg_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7,$8,$9)}' | sort -u | awk 'NF' >> $IP/autoenum/loot/services
-
         cat $IP/autoenum/reg_scan/ports_and_services/services_running | grep "http" | egrep "80|8080|443|12443|81|82|8081|8082" >> $IP/autoenum/loot/raw/http_found.tmp
         cat $IP/autoenum/reg_scan/ports_and_services/services_running | grep "http" | sort -u >> $IP/autoenum/loot/raw/http_found.tmp
         cat $IP/autoenum/loot/raw/http_found.tmp | sort -u >> $IP/autoenum/loot/raw/http_found;
@@ -170,7 +65,9 @@ reg (){
 	cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "pop3" > $loot/raw/pop3_found
         cat $IP/autoenum/reg_scan/ports_and_services/services_running | sort -u | grep "oracle" > $loot/raw/oracle_found
         cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "rpc" > $loot/raw/rpc_found
+        cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "redis" > $loot/raw/redis_found
 
+        if [[ -s "$loot/raw/redis_found" ]];then redis_enum;fi
         if [[ -s "$loot/raw/snmp_found" ]];then snmp_enum;fi
         if [[ -s "$loot/raw/rpc_found" ]];then rpc_enum;fi
         if [[ -s "$loot/raw/pop3_found" ]];then pop3_enum;fi
@@ -184,30 +81,25 @@ reg (){
 	if [[ -s "$loot/raw/imap_found" ]];then imap_enum;fi
         if [[ -s "$loot/raw/smb_found" ]];then smb_enum;fi
         if [[ -s "$loot/raw/http_found" ]] || [ -s "$loot/raw/ports" ];then http_enum;fi
-
 #        if [[ -s "$loot/raw/windows_found" ]];then windows_enum;fi
 #        if [[ -s "$loot/raw/linux_found" ]];then linux_enum;fi
-
 }
 
 aggr (){
 	banner
 	upgrade
 	nmap_aggr="nmap -A -T4 -p- -Pn -v $IP"
-
 	if [[ ! -d "$IP/autoenum/aggr_scan/raw" ]];then mkdir -p $IP/autoenum/aggr_scan/raw; fi
 	if [[ ! -d "$IP/autoenum/aggr_scan/ports_and_services" ]];then  mkdir -p $IP/autoenum/aggr_scan/ports_and_services; fi
-
 	nmap -sV $IP -oX $IP/autoenum/aggr_scan/raw/xml_out & $nmap_aggr | tee $IP/autoenum/aggr_scan/raw/full_scan;searchsploit -j --nmap $IP/autoenum/aggr_scan/raw/xml_out | tee -a $loot/exploits/searchsploit_nmap
+	searchsploit --nmap $IP/autoenum/aggr_scan/raw/xml_out
 	cat $loot/exploits/searchsploit_nmap | jq >> $loot/exploits/searchsploit_nmap.json
         rm $loot/exploits/searchsploit_nmap
 
 	cat $IP/autoenum/aggr_scan/raw/full_scan | grep "open" | awk -F 'Discovered' '{print $1}' | sed '/^$/d' | sed '/|/,+1 d' >> $IP/autoenum/aggr_scan/ports_and_services/services_running
 	cat $IP/autoenum/aggr_scan/raw/full_scan | grep 'OS' | sed '1d' | sed '$d' | cut -d '|' -f 1 | sed '/^$/d' >> $IP/autoenum/aggr_scan/ports_and_services/OS_detection
 	cat $IP/autoenum/aggr_scan/raw/full_scan | grep "script results" > $IP/autoenum/aggr_scan/ports_and_services/script_output;cat $IP/autoenum/aggr_scan/raw/full_scan | grep "|" | sed '$d' >>  $IP/autoenum/aggr_scan/ports_and_services/script_output
-
 #	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | awk '{print($4,$5,$6,$7,$8,$9)}' | sort -u | awk 'NF' >> $IP/autoenum/loot/services
-
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | grep "http" | egrep "80|8080|443|12443|81|82|8081|8082" >> $IP/autoenum/loot/raw/http_found.tmp
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | grep "http" | sort -u >> $IP/autoenum/loot/raw/http_found.tmp
 	cat $IP/autoenum/loot/raw/http_found.tmp | sort -u >> $IP/autoenum/loot/raw/http_found;
@@ -223,7 +115,10 @@ aggr (){
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "pop3" > $loot/raw/pop3_found
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "imap" > $loot/raw/imap_found
 	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "rpc" > $loot/raw/rpc_found
+	cat $IP/autoenum/aggr_scan/ports_and_services/services_running | sort -u | grep "redis" > $loot/raw/redis_found
 
+
+	if [[ -s "$loot/raw/redis_found" ]];then redis_enum;fi
 	if [[ -s "$loot/raw/snmp_found" ]];then snmp_enum;fi
 	if [[ -s "$loot/raw/rpc_found" ]];then rpc_enum;fi
 	if [[ -s "$loot/raw/pop3_found" ]];then pop3_enum;fi
@@ -235,10 +130,14 @@ aggr (){
 	if [[ -s "$loot/raw/oracle_found" ]];then oracle_enum;fi
 	if [[ -s "$loot/raw/smb_found" ]];then smb_enum;fi
 	if [[ -s "$loot/raw/http_found" ]] || [[ -s "$loot/raw/ports" ]];then http_enum;fi
-
 #	if [[ -s "$loot/raw/windows_found" ]];then windows_enum;fi
 #	if [[ -s "$loot/raw/linux_found" ]];then linux_enum;fi
+}
 
+redis_enum (){
+	mkdir $loot/redis
+	nmap --script redis-info -sV -p 6379 $IP
+	echo "msf> use auxiliary/scanner/redis/redis_server" >> $loot/redis/manual_cmds
 }
 
 snmp_enum (){
@@ -256,7 +155,6 @@ snmp_enum (){
 	echo "onesixtyone -c /usr/share/doc/onesixtyone/dict.txt $IP" >> $loot/snmp/cmds_run &
 	echo "snmp-check -c public $IP" >> $loot/snmp/cmds_run &
 	wait
-
 	rm $IP/autoenum/loot/raw/snmp_found
 }
 
@@ -283,7 +181,6 @@ ldap_enum (){
 	#ldapsearch -x -h $rhost -s base namingcontexts | tee -a $loot/ldap/ldapsearch &
 	echo "nmap -vv -Pn -sV -p 389 --script='(ldap* or ssl*) and not (brute or broadcast or dos or external or fuzzer)' $IP" >> $loot/ldap/cmds_run &
 	wait
-
 	rm $loot/raw/ldap_found
 }
 
@@ -305,7 +202,6 @@ ftp_enum (){
 	done
 	echo "nmap -sV -Pn -p $port --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,ftp-syst -v $IP " >> $loot/ftp/cmds_run &
 	wait
-
 	rm $loot/ftp/port_list
 	rm $loot/raw/ftp_found
 	echo "[+] FTP enum complete"
@@ -322,7 +218,6 @@ smtp_enum (){
 	echo "telnet $IP $port" >> $loot/smpt/manual_cmds
  	echo "smtp-user-enum -M VRFY -U /usr/share/metasploit-framework/data/wordlists/unix_users.txt -t $IP -p $port" >> $loot/smtp/cmds_run &
 	wait
-
 	rm $loot/smtp/port_list
 	rm $loot/raw/smtp_found
 }
@@ -387,7 +282,7 @@ http_enum (){
 		whatweb -v -a 3 http://$IP | tee -a $IP/autoenum/loot/http/whatweb/plugins
 		echo "[+] checking for wafs"
 		wafw00f http://$IP | tee -a  $IP/autoenum/loot/http/wafw00f/wafs
-		if grep -q "No WAF detected by the generic detection" "$IP/autenum/loot/http/wafw00f/wafs";then rm $IP/autoenum/loot/http/wafw00f/wafs;fi
+#		if grep -q "No WAF detected by the generic detection" "$IP/autoenum/loot/http/wafw00f/wafs";then rm $IP/autoenum/loot/http/wafw00f/wafs;fi
 	fi
 		touch $loot/http/cmds_run
 		echo "uniscan -u http://$IP -qweds" >> $loot/http/cmds_run &
@@ -398,7 +293,6 @@ http_enum (){
 		echo "whatweb -v -a 3 http://$IP" >> $loot/http/cmds_run &
 		echo "wafw00f http://$IP" >> $loot/http/cmds_run &
 		wait
-
 		echo "[+] http enum complete!"
 		rm $IP/autoenum/loot/raw/http_found
 }
@@ -417,19 +311,15 @@ smb_enum (){
 	nmap --script smb-enum-shares -p 139,445 $IP | tee -a $loot/smb/shares/nmap_shares
 	smbmap -H $IP -R | tee -a $loot/smb/shares/smbmap_out
 	smbclient -N -L \\\\$IP | tee -a $loot/smb/shares/smbclient_out
-
 	if grep -q "Not enough '\' characters in service" "$loot/smb/shares/smbclient_out";then smbclient -N -H \\\\\\$IP | tee -a $loot/smb/shares/smbclient_out;fi
 	if grep -q "Not enough '\' characters in service" "$loot/smb/shares/smbclient_out";then smbclient -N -H \\$IP | tee -a $loot/smb/shares/smbclient_out;fi
 	if grep -q "Not enough '\' characters in service" "$loot/smb/shares/smbclient_out";then rm $loot/smb/shares/smbclient_out; echo "smbclient could not be auotmatically run, rerun smbclient -N -H [IP] manauly" >> $loot/smb/notes;fi
 	if grep -q "Error NT_STATUS_UNSUCCESSFUL" "$loot/smb/shares/smbclient_out";then rm $loot/smb/shares/smbclient;fi
-
 	if [[ -s "$loot/smb/shares/smbclient_out" ]];then echo "smb shares open to null login, use rpcclient -U '' -N [ip] to run rpc commands, use smbmap -u null -p '' -H $IP -R to verify this" >> $loot/smb/notes;fi
-
 	find ~ -path '*/$IP/autoenum/loot/smb/*' -type f > $loot/smb/files
 	for file in $(cat $loot/smb/files);do
 		if grep -q "QUITTING!" "$file" || grep -q "ERROR: Script execution failed" "$file" || grep "segmentation fault" "$file";then rm $file;fi
 	done
-
 	touch $loot/smb/cmds_run
 	echo "nmap --script smb-vuln-ms17-010.nse --script-args=unsafe=1 -p 139,445 $IP " >> $loot/smb/cmds_run &
 	echo "nmap --script smb-vuln-ms08-067.nse --script-args=unsafe=1 -p 445 $IP" >> $loot/smb/cmds_run &
@@ -438,7 +328,6 @@ smb_enum (){
 	echo "smbmap -H $IP -R " >> $loot/smb/cmds_run &
 	echo "smbclient -N -L \\\\$IP " >> $loot/smb/cmds_run &
 	wait
-
 	rm $loot/smb/files
 	rm $loot/raw/smb_found
 	echo "[+] SMB enum complete!"
@@ -452,8 +341,6 @@ windows_enum (){
 	echo "[-] Work in Progress"
 }
 
-
-
 cleanup (){
 	echo "[+] Cleaning up..."
 	find $IP/autoenum/ -type d -empty -delete
@@ -461,30 +348,241 @@ cleanup (){
 	rm installed
 }
 
-while getopts "hba:r:" opt;do
-	case ${opt} in
-		a )
-		  aggr
-		  cleanup
-		  reset
-		  exit 1
-		  ;;
-		r )
-		  reg
-		  cleanup
-		  reset
-		  exit 1
-	          ;;
-		h )
-		  halp_meh
-		  exit 1
-		  ;;
-		b )
-		  banner
-		  exit 1
-		  ;;
+get_ip (){
+	echo -e
+	echo "Enter a target IP"
+	tput bold; echo -en "Autoenum > ";tput sgr0
+	read unchecked_IP
+	if [[ $unchecked_IP =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]];then
+        	IP="$unchecked_IP";
 
-	esac
+        	sleep 1
+        	tput setaf 4;echo -e "[+] IP set to $IP";tput sgr0
+        	echo -e
+	else
+        	tput setaf 1
+        	echo "[-] Invalid IP detected."
+        	echo "[-] Example: 192.168.1.5"
+        	tput sgr0
+        	get_ip
+	fi
+}
+
+# add some general file/dir manipulation commands i.e cat, cd, ls, etc.
+halp_meh (){
+        echo "Scan Profiles:"
+        echo -e "[*] aggr"
+        echo -e "[*] reg"
+        echo -e
+        echo "General Commands:"
+        echo -e "[*] ping"
+        echo -e "[*] help"
+        echo -e "[*] banner"
+        echo -e "[*] clear"
+	echo -e "[*] reset"
+	echo -e "[*] commands"
+	echo -e "[*] shell"
+        echo -e "[*] upgrade"
+        echo -e "[*] set_ip"
+        echo -e "[*] exit"
+        echo -e
+        sleep 1
+}
+
+halp_meh_pws (){
+        echo "General Commands:"
+	echo "[*] ping - Verify host is up/accepting ping probes"
+        echo "[*] help - displays this page"
+        echo "[*] banner - display banner"
+        echo "[*] clear - clears screen"
+       	echo "[*] reset - run this if text is unviewable after a scan"
+	echo "[*] commands - shows all avaliable commands"
+	echo "[*] shell - allows you to run commands as if in a terminal"
+        echo "[*] upgrade - checks to see if any dependencies require an update"
+        echo "[*] set_ip - prompt"
+        echo -e
+        echo "Scan Profiles:"
+        echo "[*] aggr - runs aggressive scan. scans all ports aggressively"
+        echo "[*] reg - runs regular scan. scans all ports normally, no scripts and checks only for OS"
+        echo -e
+}
+
+menu (){
+tput bold;echo -en "Autoenum($IP) > ";tput sgr0
+read arg
+
+while true && [[ ! "$IP" == " " ]];do
+                # add some color
+                # add more banners (?)...grimmie want more banners :(
+	mkbasedirs (){
+	echo "[+] Checking for base dirs..."
+	if [[ ! -d "$IP/autoenum" ]];then mkdir -p $IP/autoenum;fi
+	if [[ ! -d "$IP/autoenum/loot/raw" ]];then mkdir -p $IP/autoenum/loot/raw; loot="$IP/autoenum/loot";else loot="$IP/autoenum/loot";fi
+	if [[ ! -d "$loot/exploits" ]];then mkdir -p $loot/exploits;fi
+	echo "[+] Done!"
+	}
+        case $arg  in
+		"")
+			menu
+			break
+			;;
+		"commands")
+			halp_meh
+			menu
+			break
+			;;
+		"shell")
+			echo -en "[+] Command > ";read cmd #add some color or somthing
+			$cmd
+			menu
+			break
+			;;
+		"reset")
+			reset
+			menu
+			break
+			;;
+		"upgrade")
+			upgrade
+			menu
+			break
+			;;
+                "clear")
+                        clear
+                        menu
+                        break
+                        ;;
+                "banner")
+                        banner
+                        menu
+                        break
+                        ;;
+                "ping")
+                        ping $IP -c 1;echo -e
+                        menu
+                        break
+                        ;;
+                "aggr")
+                        echo "[+] You've selected the aggressive scan profile!";echo -e
+			mkbasedirs
+			aggr
+			cleanup
+                        menu
+                        break
+                        ;;
+                "reg")
+                        echo "[+] You've selected the regular scan profile!";echo -e
+			mkbasedirs
+			reg
+			cleanup
+			menu
+                        break
+                        ;;
+                "help")
+                        halp_meh_pws
+                        menu
+                        break
+                        ;;
+                "set_ip")
+                        echo -en "new IP > ";read unchecked_IP
+                        if [[ $unchecked_IP =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]];then
+                                IP="$unchecked_IP"
+                        else
+                                echo "[-] Invalid IP detected."
+                                echo "[-] Example: 192.168.1.5"
+                        fi
+                        echo "[-] IP changed to $IP"
+                        menu
+                        break
+                        ;;
+                "exit")
+                        tput setaf 1;echo "[-] Terminating session..."
+                        tput sgr0
+                        sleep 1.5
+                        break
+                        ;;
+                *)
+                        tput setaf 8;echo "[-] Invalid input detected"
+                        tput sgr0
+                        menu
+                        break
+                        ;;
+        esac
 done
+}
 
-shift $((OPTIND -1))
+if [ ! -x "$(command -v nmap)" ];then
+	echo "[+] nmap not detected...Installing"
+	sudo apt-get install nmap -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v nikto)" ];then
+	echo "[+] nikto not detected. Installing..."
+	sudo apt-get install nikto -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v gobuster)" ];then
+	echo "[+] gobuster not detected. Installing..."
+	sudo apt-get install gobuster -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v whatweb)" ];then
+       echo "[+] whatweb not detected. installing..."
+	sudo apt-get install whatweb -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v onesixtyone)" ];then
+        echo "[+] onesixtyone not detected. Installing..."
+        sudo apt-get install onesixtyone -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v rpcbind)" ];then
+	echo "rpcbind not detected. Installing..."
+	sudo apt-get install rpcbind -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v snmp-check)" ];then
+        echo "[+] snmp-check not detected. Installing..."
+        sudo apt-get install snmp-check -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v snmpwalk)" ];then
+        echo "[+] snmpwalk not detected. Installing..."
+        sudo apt-get install snmpwalk -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v fierce)" ];then
+        echo "[+] fierce not detected. Installing..."
+        sudo apt-get install fierce -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v dnsrecon)" ];then
+        echo "[+] dnsrecon not detected. Installing..."
+        sudo apt-get installl dnsrecon -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v dnsenum)" ];then
+        echo "[+] dnsenum not detected. Installing..."
+        sudo apt-get install dnsenum -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v oscanner)" ];then
+        echo "[+] oscanner not detected. Installing..."
+        sudo apt-get install oscanner -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v wafw00f)" ];then
+        echo "[+] wafw00f not detected. Installing..."
+	sudo apt-get install wafw00f -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v odat)" ];then
+        echo "[+] odat not detected. installing..."
+	sudo apt-get install odat -y > installing;rm installing
+fi
+
+clear
+banner
+get_ip
+halp_meh
+menu
