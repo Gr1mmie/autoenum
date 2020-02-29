@@ -10,3 +10,4 @@ add usage modules. (kinda like gobuster....maybe)
 flag for exploitation, exploitation tools
 priv esc
 make shell feature persistant
+download searchsploit exploits found and organize by service
