@@ -80,9 +80,6 @@ if [ ! -x "$(command -v tput)" ];then
         sudo apt-get install tput -y > installing;rm installing
 fi
 
-#source api-keys.sh
-hunter_io_API="7929dee3153d23bfae3eba4ca4c84b4603059b62"
-
 source functions/banner.sh
 source functions/upgrade.sh
 source functions/scans.sh
