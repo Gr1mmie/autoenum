@@ -52,10 +52,23 @@ autoenum
 ### Version 2.0.1
 * persistent shell command
 
-### Version 2.1 (Work in Progress)
-* AD enumeration (suite)
+### Version 2.1 
 * imap, mysql,redis enumeration
 
+### Version 3.0
+* Polished UI
+* Cleaned up shell util errors
+* Added more scan options:
+  * top 1k scan
+  * top 10k scan
+  * UDP scan
+* Added Combination scans (vuln scan can be added onto any other scan)
+* Added Auxilary scans:
+  * Quick scan added
+  * Vuln scan added
+* Fixed update throwing errors issue
+* Now supports URLs and FQDNs 
+* Verifies the IP entered is a valid one
 ## Dependencies
 Your OS may or may not have some installed by default. Not to worry, autoenum recognizes tools not installed and installs them for you, even updating if they aren't up-to-date!
 
