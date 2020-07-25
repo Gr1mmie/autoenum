@@ -51,7 +51,7 @@ chmod +x autoenum/autoenum.sh
 
 ### Version 3.0
 * Polished UI
-* Cleaned up shell util errors
+* Cleaned up shell util errors and fixed escape keywords
 * Added more scan options:
   * top 1k scan
   * top 10k scan
@@ -63,6 +63,11 @@ chmod +x autoenum/autoenum.sh
 * Fixed update throwing errors issue
 * Now supports URLs and FQDNs 
 * Verifies the IP entered is a valid one
+* aggr + reg scans now scan top 1k ports first
+* Performs basic OS detecting using ttl
+* searchsploit output is now sent to a JSON file for easy viewing
+* nfs enum now attempts to mount discovered nfs shares
+* Fixed http multiple ports not being detected issue
 ## Dependencies
 Your OS may or may not have some installed by default. Not to worry, autoenum recognizes tools not installed and installs them for you, even updating if they aren't up-to-date!
 
