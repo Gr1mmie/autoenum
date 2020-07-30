@@ -3,7 +3,7 @@
 redis_enum (){
         mkdir $loot/redis
 	tput setaf 2;echo "[+] Starting redis enum";tput sgr0
-        nmap --script redis-info -sV -p 6379 $IP
+        nmap --script redis-info -sV -p 6379 $IP | tee -a $loot/redis/redis_info
         echo "msf> use auxiliary/scanner/redis/redis_server" >> $loot/redis/manual_cmds
 }
 
