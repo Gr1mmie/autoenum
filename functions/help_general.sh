@@ -21,7 +21,7 @@ get_ip (){
 		fi
 		rm $cwd/tmp
                 tput setaf 4;echo -e "[+] IP set to $IP";tput sgr0;echo -e
-	elif [[ $unchecked_IP =~ ^(-a-zA-Z0-9\.)?[-a-zA-Z0-9.]{2,256}(\.[a-zA-Z]{2,4}){1,3}$ ]];then
+	elif [[ $unchecked_IP =~ ^(-a-zA-Z0-9\.)?[-a-zA-Z0-9.]{2,256}(\.[a-zA-Z]{2,24}){1,3}$ ]];then
 		IP=$(host $unchecked_IP | head -n1 | awk '{print($4)}')
 		tput setaf 4;echo -e "$unchecked_IP resolved to $IP\n";tput sgr0
         else
