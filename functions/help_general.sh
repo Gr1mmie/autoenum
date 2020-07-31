@@ -21,13 +21,13 @@ get_ip (){
 		fi
 		rm $cwd/tmp
                 tput setaf 4;echo -e "[+] IP set to $IP";tput sgr0;echo -e
-	elif [[ $unchecked_IP =~ [a-z,A-Z,0-9].[a-z]$ ]] || [[ $unchecked_IP =~ [a-z].[a-z,A-Z,0-9].[a-z]$ ]];then
+	elif [[ $unchecked_IP =~ ^(-a-zA-Z0-9\.)?[-a-zA-Z0-9.]{2,256}(\.[a-zA-Z]{2,4}){1,3}$ ]];then
 		IP=$(host $unchecked_IP | head -n1 | awk '{print($4)}')
 		tput setaf 4;echo -e "$unchecked_IP resolved to $IP\n";tput sgr0
         else
                 tput setaf 8
                 echo "[-] Invalid IP or hostname detected."
-                echo -e "[-] Example:\n\t[>] 192.168.1.5\n\t[>] google.com"
+                echo -e "[-] Example:\n\t[>] 192.168.1.5\n\t[>] google.com\n\t[>] google.co.uk\n\t[>] code.google.com"
                 tput sgr0
                 get_ip
         fi
