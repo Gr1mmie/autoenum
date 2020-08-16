@@ -79,7 +79,7 @@ halp_meh (){
 	echo -e "[*] top 10k+vuln"
 	echo -e "[*] udp"
         echo -e
-        tput bold;echo -e "[~] Auxilary:";tput sgr0
+        tput bold;echo -e "[~] Auxiliary:";tput sgr0
         echo -e "[*] vuln"
         echo -e "[*] quick"
 #        tput smul;echo "Standalone Utils:";tput rmul
