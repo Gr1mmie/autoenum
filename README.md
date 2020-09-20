@@ -68,6 +68,12 @@ chmod +x autoenum/autoenum.sh
 * searchsploit output is now sent to a JSON file for easy viewing
 * nfs enum now attempts to mount discovered nfs shares
 * Fixed http multiple ports not being detected issue
+
+### Version 3.0.1
+* Removed ports 47001 and 5985 from ports list to prevent them from being run through http enum
+* added `-nr` flag when starting autoenum to set autoenum to not attempt to resolve an IP passed (this is good if a machine is blocking pings but we know its up)
+        * Usage: `./autoenum -nr`
+
 ## Dependencies
 Your OS may or may not have some installed by default. Not to worry, autoenum recognizes tools not installed and installs them for you, even updating if they aren't up-to-date!
 
