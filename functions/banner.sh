@@ -9,7 +9,7 @@ tput setaf 6
         echo '  \__,_/ \__,_/ \__/ \____/ \___//_/ /_/ \__,_//_/ /_/ /_/   '
         echo "                                                             "
 tput bold; echo "Author: Grimmie                                           "
-tput bold; echo "Version: 3.0.0                                            "
+tput bold; echo "Version: 3.0.1                                            "
         tput sgr0
         sleep 1.025
 }
