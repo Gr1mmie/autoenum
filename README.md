@@ -101,3 +101,6 @@ Your OS may or may not have some installed by default. Not to worry, autoenum re
 
 ## Thanks
 Dievus
+
+## Featured 
+https://www.kitploit.com/2020/07/autoenum-automatic-service-enumeration.html
