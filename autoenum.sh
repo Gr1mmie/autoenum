@@ -1,4 +1,5 @@
 #!/bin/bash
+dir=$(dirname $(readlink -f $0))
 
 if [ ! -x "$(command -v nmap)" ];then
         echo "[+] nmap not detected...Installing"
@@ -80,12 +81,12 @@ if [ ! -x "$(command -v tput)" ];then
         sudo apt-get install tput -y > installing;rm installing
 fi
 
-source functions/banner.sh
-source functions/upgrade.sh
-source functions/scans.sh
-source functions/enum.sh
-source functions/help_general.sh
-source functions/menu.sh
+source $dir/functions/banner.sh
+source $dir/functions/upgrade.sh
+source $dir/functions/scans.sh
+source $dir/functions/enum.sh
+source $dir/functions/help_general.sh
+source $dir/functions/menu.sh
 
 
 if [[ $1 == '-nr' ]];then nr=1;fi
