@@ -38,7 +38,7 @@ fi
 
 if [ ! -x "$(command -v snmpwalk)" ];then
         echo "[+] snmpwalk not detected. Installing..."
-        sudo apt-get install snmpwalk -y > installing;rm installing
+        sudo apt-get install snmp -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v fierce)" ];then
@@ -48,7 +48,7 @@ fi
 
 if [ ! -x "$(command -v dnsrecon)" ];then
         echo "[+] dnsrecon not detected. Installing..."
-        sudo apt-get installl dnsrecon -y > installing;rm installing
+        sudo apt installl dnsrecon -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v dnsenum)" ];then
