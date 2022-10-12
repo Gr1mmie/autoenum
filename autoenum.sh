@@ -33,12 +33,17 @@ fi
 
 if [ ! -x "$(command -v snmp-check)" ];then
         echo "[+] snmp-check not detected. Installing..."
-        sudo apt-get install snmp-check -y > installing;rm installing
+        sudo apt install snmpcheck -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v snmpwalk)" ];then
         echo "[+] snmpwalk not detected. Installing..."
-        sudo apt-get install snmp -y > installing;rm installing
+        sudo apt install snmp -y > installing;rm installing
+fi
+
+if [ ! -x "$(command -v snmp sipvicious)" ];then
+        echo "[+] sipvicious not detected. Installing..."
+        sudo apt install snmp sipvicious wkhtmltopdf -y > installing;rm installing
 fi
 
 if [ ! -x "$(command -v fierce)" ];then
