@@ -46,6 +46,11 @@ if [ ! -x "$(command -v snmp sipvicious)" ];then
         sudo apt install snmp sipvicious wkhtmltopdf -y > installing;rm installing
 fi
 
+if [ ! -x "$(command -v Net-Snmp)" ];then
+        echo "[+] Net-Snmp not detected. Installing..."
+        sudo apt install libnetsnmptrapd40 -y > installing;rm installing
+fi
+
 if [ ! -x "$(command -v fierce)" ];then
         echo "[+] fierce not detected. Installing..."
         sudo apt-get install fierce -y > installing;rm installing
